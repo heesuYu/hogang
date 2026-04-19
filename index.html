@@ -9,9 +9,6 @@
   <meta property="og:type" content="website">
   <title>나는 호갱일까? - 핸드폰 개통 비용 계산기</title>
 
-  <!-- ✅ Google AdSense: 아래 코드를 AdSense 승인 후 교체하세요 -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
-
   <style>
     :root {
       --red: #E24B4A;
@@ -27,7 +24,6 @@
       --radius-md: 8px;
       --radius-lg: 12px;
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
         --gray50: #1E1E1E;
@@ -39,9 +35,7 @@
         --white: #161616;
       }
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       background: var(--gray50);
@@ -49,60 +43,50 @@
       line-height: 1.5;
       min-height: 100vh;
     }
+    .page-wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 60px; }
 
-    .page-wrap {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 0 16px 60px;
-    }
-
-    /* ── 상단 헤더 ── */
-    .site-header {
-      text-align: center;
-      padding: 40px 0 8px;
-    }
+    .site-header { text-align: center; padding: 40px 0 8px; }
     .site-header h1 { font-size: 32px; font-weight: 700; }
     .site-header h1 span { color: var(--red); }
     .site-header p { font-size: 15px; color: var(--gray600); margin-top: 8px; }
 
-    /* ── 광고 슬롯 ── */
-    .ad-slot {
-      background: var(--gray100);
-      border: 1px dashed var(--gray200);
-      border-radius: var(--radius-md);
-      text-align: center;
-      padding: 16px;
-      color: var(--gray400);
-      font-size: 12px;
-      margin: 20px 0;
-    }
-    .ad-slot-label { font-size: 10px; color: var(--gray400); text-align: center; margin-bottom: 4px; }
+    .sec-label { font-size: 17px; font-weight: 600; color: var(--gray800); margin-bottom: 14px; }
+    .card { background: var(--white); border: 1px solid var(--gray200); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; }
 
-    /* ── 섹션 카드 ── */
-    .sec-label {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--gray800);
-      margin-bottom: 14px;
-    }
-    .card {
-      background: var(--white);
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-bottom: 14px;
-    }
-
-    /* ── 그리드 ── */
     .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 480px) { .g2 { grid-template-columns: 1fr; } }
 
-    /* ── 폼 요소 ── */
     .field { display: flex; flex-direction: column; gap: 5px; }
     .field label, .pcell label { font-size: 12px; color: var(--gray600); font-weight: 500; }
     .fdesc { font-size: 11px; color: var(--gray400); line-height: 1.5; }
-    .field input, .field select,
-    .pcell input, .pcell select {
+
+    /* 숫자 입력 래퍼 */
+    .num-wrap { position: relative; }
+    .num-wrap .num-display {
+      padding: 9px 40px 9px 12px;
+      font-size: 15px;
+      border: 1px solid var(--gray200);
+      border-radius: var(--radius-md);
+      background: var(--gray50);
+      color: var(--gray800);
+      width: 100%;
+      cursor: text;
+      min-height: 42px;
+      line-height: 1.4;
+    }
+    .num-wrap .num-display:focus { outline: 2px solid var(--red); outline-offset: -1px; }
+    .num-wrap .num-unit {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--gray400);
+      pointer-events: none;
+    }
+    .num-wrap input[type="hidden"] { display: none; }
+
+    .field select, .pcell select {
       padding: 9px 12px;
       font-size: 15px;
       border: 1px solid var(--gray200);
@@ -112,13 +96,21 @@
       width: 100%;
       transition: border-color 0.15s;
     }
-    .field input:focus, .field select:focus,
-    .pcell input:focus, .pcell select:focus {
-      outline: none;
-      border-color: var(--red);
-    }
+    .field select:focus, .pcell select:focus { outline: none; border-color: var(--red); }
 
-    /* ── 토글 버튼 ── */
+    /* 일반 input (이자율 등 소수점 필드) */
+    .field input[type="number"], .pcell input[type="number"] {
+      padding: 9px 12px;
+      font-size: 15px;
+      border: 1px solid var(--gray200);
+      border-radius: var(--radius-md);
+      background: var(--gray50);
+      color: var(--gray800);
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    .field input[type="number"]:focus, .pcell input[type="number"]:focus { outline: none; border-color: var(--red); }
+
     .trow { display: flex; gap: 8px; }
     .tbtn {
       flex: 1; padding: 8px; font-size: 13px;
@@ -129,21 +121,9 @@
       cursor: pointer; text-align: center;
       transition: all 0.15s;
     }
-    .tbtn.on {
-      background: var(--white);
-      border-color: var(--gray800);
-      color: var(--gray800);
-      font-weight: 600;
-    }
+    .tbtn.on { background: var(--white); border-color: var(--gray800); color: var(--gray800); font-weight: 600; }
 
-    /* ── 개통 방법 카드 ── */
-    .mcard {
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-lg);
-      padding: 16px 20px;
-      background: var(--gray100);
-      margin-bottom: 12px;
-    }
+    .mcard { border: 1px solid var(--gray200); border-radius: var(--radius-lg); padding: 16px 20px; background: var(--gray100); margin-bottom: 12px; }
     .mcard.on { background: var(--white); }
     .mtop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .mtitle { font-size: 15px; font-weight: 600; color: var(--gray800); }
@@ -154,27 +134,14 @@
     @media (max-width: 480px) { .pr { grid-template-columns: 1fr; } }
     .pcell { display: flex; flex-direction: column; gap: 5px; }
 
-    /* ── 할부 설정 박스 ── */
-    .ibox {
-      background: var(--gray100);
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-    }
+    /* 공시지원금 링크 */
+    .field-link { font-size: 11px; color: var(--red); text-decoration: none; margin-top: -2px; display: inline-block; }
+    .field-link:hover { text-decoration: underline; }
+
+    .ibox { background: var(--gray100); border: 1px solid var(--gray200); border-radius: var(--radius-md); padding: 12px 14px; }
     .ibox.h { display: none; }
-    .ilabel {
-      font-size: 11px; color: var(--gray400);
-      font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.06em; margin-bottom: 10px;
-    }
-    .iprev {
-      margin-top: 10px;
-      background: var(--white);
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      display: none;
-    }
+    .ilabel { font-size: 11px; color: var(--gray400); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .iprev { margin-top: 10px; background: var(--white); border: 1px solid var(--gray200); border-radius: var(--radius-md); padding: 10px 12px; display: none; }
     .iprev.show { display: block; }
     .prow { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
     .prow .pl { color: var(--gray600); }
@@ -183,7 +150,6 @@
     .pdiv { border: none; border-top: 1px solid var(--gray200); margin: 6px 0; }
     .prow.ptot .pl { font-weight: 600; color: var(--gray800); }
 
-    /* ── CTA 버튼 ── */
     .cta {
       width: 100%; padding: 15px;
       font-size: 16px; font-weight: 700;
@@ -195,17 +161,10 @@
     }
     .cta:hover { opacity: 0.88; }
 
-    /* ── 결과 영역 ── */
     .rarea { display: none; }
     .rarea.show { display: block; }
 
-    .rkcard {
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      background: var(--white);
-      margin-bottom: 12px;
-    }
+    .rkcard { border: 1px solid var(--gray200); border-radius: var(--radius-lg); padding: 18px 20px; background: var(--white); margin-bottom: 12px; }
     .rkcard.best { border: 2px solid var(--red); }
     .rkhead { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
     .rkbadge { font-size: 26px; min-width: 38px; text-align: center; }
@@ -215,131 +174,49 @@
     .rkamt { text-align: right; }
     .rktotal { font-size: 20px; font-weight: 700; color: var(--gray800); }
     .rkavg { font-size: 12px; color: var(--gray600); margin-top: 3px; }
-    .bestbdg {
-      font-size: 11px; background: var(--red-light); color: var(--red-dark);
-      padding: 3px 10px; border-radius: 20px;
-      font-weight: 700; display: inline-block; margin-bottom: 5px;
-    }
+    .bestbdg { font-size: 11px; background: var(--red-light); color: var(--red-dark); padding: 3px 10px; border-radius: 20px; font-weight: 700; display: inline-block; margin-bottom: 5px; }
     .mbd { border-top: 1px solid var(--gray200); padding-top: 12px; }
-    .mtit2 {
-      font-size: 11px; color: var(--gray400);
-      font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.06em; margin-bottom: 8px;
-    }
-    .phrow {
-      display: flex; align-items: baseline;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: var(--gray50);
-      border-radius: var(--radius-md);
-      margin-bottom: 6px;
-    }
+    .mtit2 { font-size: 11px; color: var(--gray400); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .phrow { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 12px; background: var(--gray50); border-radius: var(--radius-md); margin-bottom: 6px; }
     .phperiod { font-size: 13px; color: var(--gray600); }
     .phright { text-align: right; }
     .phamt { font-size: 15px; font-weight: 700; color: var(--gray800); }
     .phdet { font-size: 11px; color: var(--gray400); margin-top: 2px; }
 
-    /* ── 절약 메시지 ── */
-    .savemsg {
-      text-align: center; font-size: 14px;
-      color: var(--gray600);
-      margin-bottom: 20px; padding: 14px;
-      background: var(--white);
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-    }
+    .savemsg { text-align: center; font-size: 14px; color: var(--gray600); margin-bottom: 20px; padding: 14px; background: var(--white); border: 1px solid var(--gray200); border-radius: var(--radius-md); }
     .savemsg strong { color: var(--red); }
 
-    /* ── 막대 그래프 ── */
     .brow { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .blbl { font-size: 13px; color: var(--gray800); min-width: 80px; font-weight: 500; }
-    .btrack {
-      flex: 1; height: 30px;
-      background: var(--gray100);
-      border-radius: var(--radius-md); overflow: hidden;
-    }
-    .bfill {
-      height: 100%; border-radius: var(--radius-md);
-      display: flex; align-items: center;
-      padding-left: 10px; font-size: 12px;
-      font-weight: 600; color: white;
-      transition: width 0.6s ease; white-space: nowrap;
-    }
+    .btrack { flex: 1; height: 30px; background: var(--gray100); border-radius: var(--radius-md); overflow: hidden; }
+    .bfill { height: 100%; border-radius: var(--radius-md); display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: white; transition: width 0.6s ease; white-space: nowrap; }
     .bval { font-size: 12px; color: var(--gray600); min-width: 84px; text-align: right; }
 
-    /* ── 상세 내역 ── */
-    .bdtog {
-      font-size: 13px; color: var(--gray600);
-      cursor: pointer; text-align: center;
-      margin-bottom: 12px; text-decoration: underline;
-    }
+    .bdtog { font-size: 13px; color: var(--gray600); cursor: pointer; text-align: center; margin-bottom: 12px; text-decoration: underline; }
     .bdarea { display: none; }
     .bdarea.show { display: block; }
-    .bdtbl {
-      width: 100%; border-collapse: collapse;
-      font-size: 13px; margin-bottom: 14px;
-    }
-    .bdtbl th {
-      font-size: 11px; color: var(--gray600);
-      font-weight: 600; padding: 7px 10px;
-      text-align: left;
-      border-bottom: 1px solid var(--gray200);
-    }
-    .bdtbl td {
-      padding: 7px 10px; color: var(--gray800);
-      border-bottom: 1px solid var(--gray200);
-    }
+    .bdtbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px; }
+    .bdtbl th { font-size: 11px; color: var(--gray600); font-weight: 600; padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--gray200); }
+    .bdtbl td { padding: 7px 10px; color: var(--gray800); border-bottom: 1px solid var(--gray200); }
     .bdtbl td:last-child { text-align: right; }
     .bdtbl tr.tot td { font-weight: 700; border-bottom: none; padding-top: 12px; }
     .bdtbl tr.itrow td { color: var(--red); }
 
-    /* ── 푸터 ── */
-    .footer {
-      text-align: center; font-size: 12px;
-      color: var(--gray400); padding: 30px 0 10px;
-      border-top: 1px solid var(--gray200);
-      margin-top: 40px;
-    }
+    .footer { text-align: center; font-size: 12px; color: var(--gray400); padding: 30px 0 10px; border-top: 1px solid var(--gray200); margin-top: 40px; }
     .footer a { color: var(--gray400); text-decoration: underline; }
 
-    /* ── 안내 뱃지 ── */
-    .info-note {
-      font-size: 12px; color: var(--gray600);
-      background: var(--gray100);
-      border-left: 3px solid var(--gray400);
-      padding: 8px 12px;
-      border-radius: 0 var(--radius-md) var(--radius-md) 0;
-      margin-bottom: 14px;
-      line-height: 1.6;
-    }
+    .info-note { font-size: 12px; color: var(--gray600); background: var(--gray100); border-left: 3px solid var(--gray400); padding: 8px 12px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin-bottom: 14px; line-height: 1.6; }
   </style>
 </head>
 <body>
   <div class="page-wrap">
 
-    <!-- 헤더 -->
     <header class="site-header">
       <h1>나는 <span>호갱</span>일까?</h1>
       <p>핸드폰 개통 방법별 비용을 내 상황에 맞게 직접 계산해보세요</p>
     </header>
 
-    <!-- 상단 광고 슬롯 -->
-    <div class="ad-slot-label">광고</div>
-    <div class="ad-slot">
-      <!-- ✅ AdSense 승인 후 아래 주석을 해제하고 data-ad-client, data-ad-slot 값을 교체하세요 -->
-      <!--
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-           data-ad-slot="XXXXXXXXXX"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-      -->
-      광고 영역 (가로형 배너)
-    </div>
-
-    <div class="info-note">
+    <div class="info-note" style="margin-top:20px;">
       💡 할부이자는 원리금균등상환 방식으로 계산됩니다. 실제 청구금액은 통신사/카드사 조건에 따라 다를 수 있습니다.
     </div>
 
@@ -348,8 +225,12 @@
       <div class="sec-label">내 현재 상황</div>
       <div class="g2" style="margin-bottom:14px;">
         <div class="field">
-          <label>현재 요금제 월 납부액 (원)</label>
-          <input type="number" id="cur-plan" value="49000" inputmode="numeric">
+          <label>현재 요금제 월 납부액</label>
+          <div class="num-wrap">
+            <div class="num-display" contenteditable="true" id="cur-plan-disp" data-target="cur-plan" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">49,000</div>
+            <span class="num-unit">원</span>
+            <input type="hidden" id="cur-plan" value="49000">
+          </div>
         </div>
         <div class="field">
           <label>현재 선택약정 할인</label>
@@ -361,9 +242,13 @@
       </div>
       <div class="g2">
         <div class="field">
-          <label>구매 후 사용할 요금제 (월, 원)</label>
+          <label>구매 후 사용할 요금제</label>
           <span class="fdesc">의무 요금제 유지 기간 종료 후<br>실제 사용할 요금제 금액</span>
-          <input type="number" id="after-plan" value="49000" inputmode="numeric">
+          <div class="num-wrap">
+            <div class="num-display" contenteditable="true" id="after-plan-disp" data-target="after-plan" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">49,000</div>
+            <span class="num-unit">원</span>
+            <input type="hidden" id="after-plan" value="49000">
+          </div>
         </div>
         <div class="field">
           <label>비교 기간</label>
@@ -385,15 +270,16 @@
       <!-- 자급제 -->
       <div class="mcard on">
         <div class="mtop">
-          <div>
-            <div class="mtitle">자급제 구매</div>
-            <div class="msub">단말기 직접 구매 + 기존 요금제 유지</div>
-          </div>
+          <div><div class="mtitle">자급제 구매</div><div class="msub">단말기 직접 구매 + 기존 요금제 유지</div></div>
         </div>
         <div class="mf">
           <div class="field">
-            <label>자급제 단말기 가격 (원)</label>
-            <input type="number" id="sim-price" value="1250000" inputmode="numeric" oninput="upv('sim')">
+            <label>자급제 단말기 가격</label>
+            <div class="num-wrap">
+              <div class="num-display" contenteditable="true" id="sim-price-disp" data-target="sim-price" oninput="onNumInput(this);upv('sim')" onkeydown="onNumKey(event,this)">1,250,000</div>
+              <span class="num-unit">원</span>
+              <input type="hidden" id="sim-price" value="1250000">
+            </div>
           </div>
           <div class="field">
             <label>결제 방식</label>
@@ -422,21 +308,40 @@
       <!-- 공시지원금 -->
       <div class="mcard on" id="pub-card">
         <div class="mtop">
-          <div>
-            <div class="mtitle">공시지원금</div>
-            <div class="msub">단말기 할인 대신 요금제 약정 할인 불가</div>
-          </div>
+          <div><div class="mtitle">공시지원금</div><div class="msub">단말기 할인 대신 요금제 약정 할인 불가</div></div>
           <input type="checkbox" class="chk" id="pub-en" checked onchange="togM('pub')">
         </div>
         <div class="mf" id="pub-mf">
-          <div class="field"><label>공시지원금 적용 후 단말기가 (원)</label><input type="number" id="pub-phone" value="367000" inputmode="numeric" oninput="upv('pub')"></div>
-          <div class="pr">
-            <div class="pcell"><label>의무 고가 요금제 (월, 원)</label><input type="number" id="pub-hp" value="99000" inputmode="numeric"></div>
-            <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="pub-hm" value="6" inputmode="numeric"></div>
+          <div class="field">
+            <label>공시지원금 적용 후 단말기가</label>
+            <a class="field-link" href="https://www.smartchoice.or.kr/smc/mobile/dantongList.do" target="_blank" rel="noopener">📋 스마트초이스에서 공시지원금 조회하기 →</a>
+            <div class="num-wrap">
+              <div class="num-display" contenteditable="true" id="pub-phone-disp" data-target="pub-phone" oninput="onNumInput(this);upv('pub')" onkeydown="onNumKey(event,this)">367,000</div>
+              <span class="num-unit">원</span>
+              <input type="hidden" id="pub-phone" value="367000">
+            </div>
           </div>
           <div class="pr">
-            <div class="pcell"><label>부가서비스 금액 (월, 원)</label><input type="number" id="pub-ad" value="3500" inputmode="numeric"></div>
-            <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="pub-am" value="3" inputmode="numeric"></div>
+            <div class="pcell">
+              <label>의무 고가 요금제</label>
+              <div class="num-wrap">
+                <div class="num-display" contenteditable="true" id="pub-hp-disp" data-target="pub-hp" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">99,000</div>
+                <span class="num-unit">원</span>
+                <input type="hidden" id="pub-hp" value="99000">
+              </div>
+            </div>
+            <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="pub-hm" value="6"></div>
+          </div>
+          <div class="pr">
+            <div class="pcell">
+              <label>부가서비스 금액</label>
+              <div class="num-wrap">
+                <div class="num-display" contenteditable="true" id="pub-ad-disp" data-target="pub-ad" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">3,500</div>
+                <span class="num-unit">원</span>
+                <input type="hidden" id="pub-ad" value="3500">
+              </div>
+            </div>
+            <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="pub-am" value="3"></div>
           </div>
           <div class="field"><label>결제 방식</label>
             <div class="trow"><div class="tbtn on" id="pub-pf" onclick="setPT('pub','full')">일시불</div><div class="tbtn" id="pub-pi" onclick="setPT('pub','inst')">할부</div></div>
@@ -461,21 +366,39 @@
       <!-- 선택약정 -->
       <div class="mcard on" id="sel-card">
         <div class="mtop">
-          <div>
-            <div class="mtitle">선택약정</div>
-            <div class="msub">단말기 정가 구매 + 요금제 25% 할인</div>
-          </div>
+          <div><div class="mtitle">선택약정</div><div class="msub">단말기 정가 구매 + 요금제 25% 할인</div></div>
           <input type="checkbox" class="chk" id="sel-en" checked onchange="togM('sel')">
         </div>
         <div class="mf" id="sel-mf">
-          <div class="field"><label>선택약정 단말기 가격 (원)</label><input type="number" id="sel-phone" value="837000" inputmode="numeric" oninput="upv('sel')"></div>
-          <div class="pr">
-            <div class="pcell"><label>의무 고가 요금제 (월, 원)</label><input type="number" id="sel-hp" value="99000" inputmode="numeric"></div>
-            <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="sel-hm" value="6" inputmode="numeric"></div>
+          <div class="field">
+            <label>선택약정 단말기 가격</label>
+            <div class="num-wrap">
+              <div class="num-display" contenteditable="true" id="sel-phone-disp" data-target="sel-phone" oninput="onNumInput(this);upv('sel')" onkeydown="onNumKey(event,this)">837,000</div>
+              <span class="num-unit">원</span>
+              <input type="hidden" id="sel-phone" value="837000">
+            </div>
           </div>
           <div class="pr">
-            <div class="pcell"><label>부가서비스 금액 (월, 원)</label><input type="number" id="sel-ad" value="3500" inputmode="numeric"></div>
-            <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="sel-am" value="3" inputmode="numeric"></div>
+            <div class="pcell">
+              <label>의무 고가 요금제</label>
+              <div class="num-wrap">
+                <div class="num-display" contenteditable="true" id="sel-hp-disp" data-target="sel-hp" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">99,000</div>
+                <span class="num-unit">원</span>
+                <input type="hidden" id="sel-hp" value="99000">
+              </div>
+            </div>
+            <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="sel-hm" value="6"></div>
+          </div>
+          <div class="pr">
+            <div class="pcell">
+              <label>부가서비스 금액</label>
+              <div class="num-wrap">
+                <div class="num-display" contenteditable="true" id="sel-ad-disp" data-target="sel-ad" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">3,500</div>
+                <span class="num-unit">원</span>
+                <input type="hidden" id="sel-ad" value="3500">
+              </div>
+            </div>
+            <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="sel-am" value="3"></div>
           </div>
           <div class="field"><label>결제 방식</label>
             <div class="trow"><div class="tbtn on" id="sel-pf" onclick="setPT('sel','full')">일시불</div><div class="tbtn" id="sel-pi" onclick="setPT('sel','inst')">할부</div></div>
@@ -502,73 +425,67 @@
 
     <!-- 결과 영역 -->
     <div class="rarea" id="rarea">
-
-      <!-- 결과 사이 광고 슬롯 -->
-      <div class="ad-slot-label">광고</div>
-      <div class="ad-slot" style="margin-bottom:20px;">
-        <!--
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        -->
-        광고 영역 (결과 상단)
-      </div>
-
       <div class="sec-label">비교 결과</div>
       <div id="rklist"></div>
       <div class="savemsg" id="savemsg"></div>
       <div id="bars" style="margin-bottom:20px;"></div>
       <div class="bdtog" onclick="togBd()">▼ 상세 내역 보기</div>
       <div class="bdarea" id="bdarea"></div>
-
-      <!-- 결과 하단 광고 슬롯 -->
-      <div class="ad-slot-label" style="margin-top:20px;">광고</div>
-      <div class="ad-slot">
-        <!--
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        -->
-        광고 영역 (결과 하단)
-      </div>
     </div>
 
-    <!-- 푸터 -->
     <footer class="footer">
       <p>본 계산기는 참고용으로, 실제 요금은 통신사 조건에 따라 다를 수 있습니다.</p>
-      <p style="margin-top:6px;">공시지원금 조회: <a href="https://www.smartchoice.or.kr/smc/mobile/dantongList.do" target="_blank" rel="noopener">스마트초이스 바로가기 →</a></p>
     </footer>
   </div>
 
   <script>
     var hasDsc=true, bdVis=false;
     var PT={sim:'full',pub:'full',sel:'full'};
-    var PM={sim:'sim-price',pub:'pub-phone',sel:'sel-phone'};
     var IM={sim:'sim-im',pub:'pub-im',sel:'sel-im'};
     var IR={sim:'sim-ir',pub:'pub-ir',sel:'sel-ir'};
+    var HID={sim:'sim-price',pub:'pub-phone',sel:'sel-phone'};
 
     function g(id){return document.getElementById(id);}
     function fmt(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
     function cl(id,cls,add){g(id).classList[add?'add':'remove'](cls);}
 
-    function setDsc(v){
-      hasDsc=v;
-      cl('disc-yes','on',v); cl('disc-no','on',!v);
+    /* ── 숫자 포맷 입력 처리 ── */
+    function onNumInput(el) {
+      var raw = el.innerText.replace(/[^0-9]/g,'');
+      var num = parseInt(raw)||0;
+      var formatted = num.toLocaleString('ko-KR');
+      // 커서 끝 유지
+      var sel = window.getSelection();
+      el.innerText = formatted;
+      // 커서를 끝으로
+      if(el.childNodes.length > 0){
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      // hidden input 업데이트
+      var tid = el.getAttribute('data-target');
+      if(tid) g(tid).value = num;
     }
+    function onNumKey(e, el) {
+      // 숫자, 백스페이스, 방향키, Delete, Tab만 허용
+      var allowed = [8,9,37,38,39,40,46];
+      if(e.key >= '0' && e.key <= '9') return;
+      if(allowed.indexOf(e.keyCode) > -1) return;
+      e.preventDefault();
+    }
+    function getNumVal(hidId){
+      return parseFloat(g(hidId).value)||0;
+    }
+
+    function setDsc(v){hasDsc=v;cl('disc-yes','on',v);cl('disc-no','on',!v);}
     function setPT(k,t){
       PT[k]=t;
-      cl(k+'-pf','on',t==='full'); cl(k+'-pi','on',t==='inst');
+      cl(k+'-pf','on',t==='full');cl(k+'-pi','on',t==='inst');
       var ib=g(k+'-ib');
-      if(t==='inst'){ib.classList.remove('h');upv(k);}
-      else{ib.classList.add('h');}
+      if(t==='inst'){ib.classList.remove('h');upv(k);}else{ib.classList.add('h');}
     }
     function togM(k){
       var en=g(k+'-en').checked;
@@ -579,21 +496,22 @@
     }
     function mp(p,m,r){var mr=r/100/12;return mr===0?p/m:p*mr*Math.pow(1+mr,m)/(Math.pow(1+mr,m)-1);}
     function gi(p,m,r){return Math.round(mp(p,m,r)*m-p);}
+
     function gpc(k){
-      var price=parseFloat(g(PM[k]).value)||0;
+      var price=getNumVal(HID[k]);
       if(PT[k]==='inst'){
-        var m=parseInt(g(IM[k]).value)||24, r=parseFloat(g(IR[k]).value)||5.9;
-        var i=gi(price,m,r), mon=Math.round(mp(price,m,r));
+        var m=parseInt(g(IM[k]).value)||24,r=parseFloat(g(IR[k]).value)||5.9;
+        var i=gi(price,m,r),mon=Math.round(mp(price,m,r));
         return{price:price,interest:i,total:price+i,isInst:true,months:m,rate:r,monthly:mon};
       }
       return{price:price,interest:0,total:price,isInst:false,months:0,rate:0,monthly:0};
     }
     function upv(k){
       if(PT[k]!=='inst')return;
-      var price=parseFloat(g(PM[k]).value)||0;
-      var m=parseInt(g(IM[k]).value)||24, r=parseFloat(g(IR[k]).value)||5.9;
-      var i=gi(price,m,r), mon=Math.round(mp(price,m,r));
-      var ip=g(k+'-ip'); ip.classList.add('show');
+      var price=getNumVal(HID[k]);
+      var m=parseInt(g(IM[k]).value)||24,r=parseFloat(g(IR[k]).value)||5.9;
+      var i=gi(price,m,r),mon=Math.round(mp(price,m,r));
+      var ip=g(k+'-ip');ip.classList.add('show');
       g(k+'-v1').textContent=fmt(price);
       g(k+'-v2').textContent=fmt(i);
       g(k+'-v3').textContent=fmt(price+i);
@@ -602,8 +520,8 @@
     function calcPhases(cost,secs){
       var ps=[],cur=0;
       for(var i=0;i<secs.length;i++){
-        var s=secs[i]; if(s.months<=0)continue;
-        var im=cost.isInst?Math.min(s.months,Math.max(0,cost.months-cur)):0, nm=s.months-im;
+        var s=secs[i];if(s.months<=0)continue;
+        var im=cost.isInst?Math.min(s.months,Math.max(0,cost.months-cur)):0,nm=s.months-im;
         if(im>0){
           var t=cost.monthly+s.plan+(s.addon||0);
           var pts=['할부금 '+fmt(cost.monthly),'요금 '+fmt(s.plan)];
@@ -611,7 +529,7 @@
           ps.push({period:(cur+1)+'~'+(cur+im)+'개월',amount:t,detail:pts.join(' + ')});
         }
         if(nm>0){
-          var st=cur+im+1, t2=s.plan+(s.addon||0);
+          var st=cur+im+1,t2=s.plan+(s.addon||0);
           var pts2=['요금 '+fmt(s.plan)];
           if(s.addon)pts2.push('부가 '+fmt(s.addon));
           ps.push({period:st+'~'+(cur+s.months)+'개월',amount:t2,detail:pts2.join(' + ')});
@@ -630,7 +548,7 @@
     }
     function doCalc(){
       var period=parseInt(g('period').value);
-      var afterPlan=parseFloat(g('after-plan').value)||49000;
+      var afterPlan=getNumVal('after-plan');
       var afterD=Math.round(afterPlan*(hasDsc?0.75:1));
       var res=[];
 
@@ -645,10 +563,10 @@
 
       if(g('pub-en').checked){
         var pc=gpc('pub');
-        var ph=parseFloat(g('pub-hp').value)||0, pm=parseInt(g('pub-hm').value)||0;
-        var pa=parseFloat(g('pub-ad').value)||0, pam=parseInt(g('pub-am').value)||0;
+        var ph=getNumVal('pub-hp'),pm=parseInt(g('pub-hm').value)||0;
+        var pa=getNumVal('pub-ad'),pam=parseInt(g('pub-am').value)||0;
         var rm=Math.max(0,period-pm);
-        var secs=[]; if(pm>0)secs.push({months:pm,plan:ph,addon:pa}); if(rm>0)secs.push({months:rm,plan:afterPlan,addon:0});
+        var secs=[];if(pm>0)secs.push({months:pm,plan:ph,addon:pa});if(rm>0)secs.push({months:rm,plan:afterPlan,addon:0});
         res.push({name:'공시지원금',sub:'의무 고가요금제 '+pm+'개월'+(pc.isInst?' / '+pc.months+'개월 할부':''),
           total:pc.total+ph*pm+pa*pam+afterPlan*rm,
           phases:calcPhases(pc,secs),isInst:pc.isInst,
@@ -659,11 +577,11 @@
 
       if(g('sel-en').checked){
         var sc2=gpc('sel');
-        var sh=parseFloat(g('sel-hp').value)||0, sm=parseInt(g('sel-hm').value)||0;
-        var sa=parseFloat(g('sel-ad').value)||0, sam=parseInt(g('sel-am').value)||0;
+        var sh=getNumVal('sel-hp'),sm=parseInt(g('sel-hm').value)||0;
+        var sa=getNumVal('sel-ad'),sam=parseInt(g('sel-am').value)||0;
         var rm2=Math.max(0,period-sm);
-        var shd=Math.round(sh*0.75), sad=Math.round(afterPlan*0.75);
-        var secs2=[]; if(sm>0)secs2.push({months:sm,plan:shd,addon:sa}); if(rm2>0)secs2.push({months:rm2,plan:sad,addon:0});
+        var shd=Math.round(sh*0.75),sad=Math.round(afterPlan*0.75);
+        var secs2=[];if(sm>0)secs2.push({months:sm,plan:shd,addon:sa});if(rm2>0)secs2.push({months:rm2,plan:sad,addon:0});
         res.push({name:'선택약정',sub:'요금제 25% 할인'+(sc2.isInst?' / '+sc2.months+'개월 할부':''),
           total:sc2.total+shd*sm+sa*sam+sad*rm2,
           phases:calcPhases(sc2,secs2),isInst:sc2.isInst,
@@ -673,13 +591,12 @@
       }
 
       res.sort(function(a,b){return a.total-b.total;});
-      var medals=['🥇','🥈','🥉'], colors=['#E24B4A','#888888','#BBBBBB'];
+      var medals=['🥇','🥈','🥉'],colors=['#E24B4A','#888888','#BBBBBB'];
       var maxT=Math.max.apply(null,res.map(function(r){return r.total;}));
 
       var rkHtml='';
       for(var i=0;i<res.length;i++){
-        var r=res[i];
-        var phHtml='';
+        var r=res[i],phHtml='';
         for(var j=0;j<r.phases.length;j++){
           var p=r.phases[j];
           phHtml+='<div class="phrow"><span class="phperiod">'+p.period+'</span><div class="phright"><div class="phamt">'+fmt(p.amount)+' / 월</div><div class="phdet">'+p.detail+'</div></div></div>';
@@ -689,7 +606,7 @@
       }
       g('rklist').innerHTML=rkHtml;
 
-      var best=res[0], worst=res[res.length-1];
+      var best=res[0],worst=res[res.length-1];
       g('savemsg').innerHTML='<strong>'+best.name+'</strong>이 가장 유리해요!<br><strong>'+worst.name+'</strong> 대비 <strong>'+fmt(worst.total-best.total)+'</strong> 절약 가능합니다.';
 
       var barHtml='';
@@ -701,7 +618,7 @@
 
       var bdHtml='';
       for(var i=0;i<res.length;i++){
-        var r=res[i], rows='';
+        var r=res[i],rows='';
         for(var j=0;j<r.bd.length;j++){
           var b=r.bd[j];
           rows+='<tr'+(b.ri?' class="itrow"':'')+'><td>'+b.l+'</td><td>'+fmt(b.a)+'</td></tr>';
