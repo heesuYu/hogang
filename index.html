@@ -225,23 +225,6 @@
       <div class="sec-label">내 현재 상황</div>
       <div class="g2" style="margin-bottom:14px;">
         <div class="field">
-          <label>현재 요금제 월 납부액</label>
-          <div class="num-wrap">
-            <div class="num-display" contenteditable="true" id="cur-plan-disp" data-target="cur-plan" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">49,000</div>
-            <span class="num-unit">원</span>
-            <input type="hidden" id="cur-plan" value="49000">
-          </div>
-        </div>
-        <div class="field">
-          <label>현재 선택약정 할인</label>
-          <div class="trow" style="margin-top:2px;">
-            <div class="tbtn on" id="disc-yes" onclick="setDsc(true)">25% 할인 중</div>
-            <div class="tbtn" id="disc-no" onclick="setDsc(false)">할인 없음</div>
-          </div>
-        </div>
-      </div>
-      <div class="g2">
-        <div class="field">
           <label>구매 후 사용할 요금제</label>
           <span class="fdesc">의무 요금제 유지 기간 종료 후<br>실제 사용할 요금제 금액</span>
           <div class="num-wrap">
@@ -259,6 +242,13 @@
             <option value="36">36개월 (3년)</option>
             <option value="48">48개월 (4년)</option>
           </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>요금제 약정 할인</label>
+        <div class="trow" style="margin-top:2px;">
+          <div class="tbtn on" id="disc-yes" onclick="setDsc('25')">선택약정 25%</div>
+          <div class="tbtn" id="disc-no" onclick="setDsc('0')">약정 없음 (알뜰폰 등)</div>
         </div>
       </div>
     </div>
@@ -439,7 +429,7 @@
   </div>
 
   <script>
-    var hasDsc=true, bdVis=false;
+    var dscRate='25', bdVis=false;
     var PT={sim:'full',pub:'full',sel:'full'};
     var IM={sim:'sim-im',pub:'pub-im',sel:'sel-im'};
     var IR={sim:'sim-ir',pub:'pub-ir',sel:'sel-ir'};
@@ -480,7 +470,11 @@
       return parseFloat(g(hidId).value)||0;
     }
 
-    function setDsc(v){hasDsc=v;cl('disc-yes','on',v);cl('disc-no','on',!v);}
+    function setDsc(v){
+      dscRate=v;
+      cl('disc-yes','on',v==='25');
+      cl('disc-no','on',v==='0');
+    }
     function setPT(k,t){
       PT[k]=t;
       cl(k+'-pf','on',t==='full');cl(k+'-pi','on',t==='inst');
@@ -549,7 +543,9 @@
     function doCalc(){
       var period=parseInt(g('period').value);
       var afterPlan=getNumVal('after-plan');
-      var afterD=Math.round(afterPlan*(hasDsc?0.75:1));
+      var discMult = dscRate==='25' ? 0.75 : 1.0;
+      var afterD=Math.round(afterPlan*discMult);
+      var discLabel = dscRate==='25' ? ' (25% 할인)' : '';
       var res=[];
 
       var sc=gpc('sim');
@@ -558,7 +554,7 @@
         phases:calcPhases(sc,[{months:period,plan:afterD,addon:0}]),
         isInst:sc.isInst,
         psum:sc.isInst?fmt(sc.price)+' + 이자 '+fmt(sc.interest)+' = '+fmt(sc.total):fmt(sc.price)+' (일시불)',
-        bd:[{l:'단말기 (기기 가격)',a:sc.price}].concat(sc.isInst?[{l:'할부이자 (연 '+sc.rate+'%, '+sc.months+'개월)',a:sc.interest,ri:true}]:[]).concat([{l:'요금제'+(hasDsc?' (25% 할인)':'')+' × '+period+'개월',a:afterD*period}])
+        bd:[{l:'단말기 (기기 가격)',a:sc.price}].concat(sc.isInst?[{l:'할부이자 (연 '+sc.rate+'%, '+sc.months+'개월)',a:sc.interest,ri:true}]:[]).concat([{l:'요금제'+discLabel+' × '+period+'개월',a:afterD*period}])
       });
 
       if(g('pub-en').checked){
