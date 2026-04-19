@@ -3,747 +3,730 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="핸드폰 개통 시 공시지원금 vs 선택약정 vs 자급제, 내 상황에 맞는 최적의 개통 방법을 비교해보세요. 할부이자, 의무요금제, 월 청구금액까지 한번에 계산!">
+  <meta name="description" content="핸드폰 개통 시 이통사지원금 vs 선택약정 vs 자급제, 내 상황에 맞는 최적의 개통 방법을 비교해보세요. 할부이자, 의무요금제, 월 청구금액까지 한번에 계산!">
   <meta property="og:title" content="나는 호갱일까? - 핸드폰 개통 비용 계산기">
-  <meta property="og:description" content="공시지원금 vs 선택약정 vs 자급제, 내 상황에 맞는 최적 개통 방법 비교 계산기">
+  <meta property="og:description" content="이통사지원금 vs 선택약정 vs 자급제, 내 상황에 맞는 최적 개통 방법 비교 계산기">
   <meta property="og:type" content="website">
   <title>나는 호갱일까? - 핸드폰 개통 비용 계산기</title>
-
   <style>
     :root {
-      --red: #E24B4A;
-      --red-light: #FCEBEB;
-      --red-dark: #A32D2D;
-      --gray50: #F8F8F8;
-      --gray100: #F0F0F0;
-      --gray200: #E0E0E0;
-      --gray400: #AAAAAA;
-      --gray600: #666666;
-      --gray800: #222222;
-      --white: #FFFFFF;
-      --radius-md: 8px;
-      --radius-lg: 12px;
+      --red:#E24B4A; --red-light:#FCEBEB; --red-dark:#A32D2D;
+      --gray50:#F8F8F8; --gray100:#F0F0F0; --gray200:#E0E0E0;
+      --gray400:#AAAAAA; --gray600:#666666; --gray800:#222222;
+      --white:#FFFFFF; --radius-md:8px; --radius-lg:12px;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --gray50: #1E1E1E;
-        --gray100: #2A2A2A;
-        --gray200: #3A3A3A;
-        --gray400: #888888;
-        --gray600: #AAAAAA;
-        --gray800: #F0F0F0;
-        --white: #161616;
+    @media(prefers-color-scheme:dark){
+      :root{
+        --gray50:#1E1E1E; --gray100:#2A2A2A; --gray200:#3A3A3A;
+        --gray400:#888888; --gray600:#AAAAAA; --gray800:#F0F0F0; --white:#161616;
       }
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: var(--gray50);
-      color: var(--gray800);
-      line-height: 1.5;
-      min-height: 100vh;
-    }
-    .page-wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 60px; }
-
-    .site-header { text-align: center; padding: 40px 0 8px; }
-    .site-header h1 { font-size: 32px; font-weight: 700; }
-    .site-header h1 span { color: var(--red); }
-    .site-header p { font-size: 15px; color: var(--gray600); margin-top: 8px; }
-
-    .sec-label { font-size: 17px; font-weight: 600; color: var(--gray800); margin-bottom: 14px; }
-    .card { background: var(--white); border: 1px solid var(--gray200); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; }
-
-    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media (max-width: 480px) { .g2 { grid-template-columns: 1fr; } }
-
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label, .pcell label { font-size: 12px; color: var(--gray600); font-weight: 500; }
-    .fdesc { font-size: 11px; color: var(--gray400); line-height: 1.5; }
-
-    /* 숫자 입력 래퍼 */
-    .num-wrap { position: relative; }
-    .num-wrap .num-display {
-      padding: 9px 40px 9px 12px;
-      font-size: 15px;
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-      background: var(--gray50);
-      color: var(--gray800);
-      width: 100%;
-      cursor: text;
-      min-height: 42px;
-      line-height: 1.4;
-    }
-    .num-wrap .num-display:focus { outline: 2px solid var(--red); outline-offset: -1px; }
-    .num-wrap .num-unit {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      color: var(--gray400);
-      pointer-events: none;
-    }
-    .num-wrap input[type="hidden"] { display: none; }
-
-    .field select, .pcell select {
-      padding: 9px 12px;
-      font-size: 15px;
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-      background: var(--gray50);
-      color: var(--gray800);
-      width: 100%;
-      transition: border-color 0.15s;
-    }
-    .field select:focus, .pcell select:focus { outline: none; border-color: var(--red); }
-
-    /* 일반 input (이자율 등 소수점 필드) */
-    .field input[type="number"], .pcell input[type="number"] {
-      padding: 9px 12px;
-      font-size: 15px;
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-      background: var(--gray50);
-      color: var(--gray800);
-      width: 100%;
-      transition: border-color 0.15s;
-    }
-    .field input[type="number"]:focus, .pcell input[type="number"]:focus { outline: none; border-color: var(--red); }
-
-    .trow { display: flex; gap: 8px; }
-    .tbtn {
-      flex: 1; padding: 8px; font-size: 13px;
-      border: 1px solid var(--gray200);
-      border-radius: var(--radius-md);
-      background: var(--gray100);
-      color: var(--gray600);
-      cursor: pointer; text-align: center;
-      transition: all 0.15s;
-    }
-    .tbtn.on { background: var(--white); border-color: var(--gray800); color: var(--gray800); font-weight: 600; }
-
-    .mcard { border: 1px solid var(--gray200); border-radius: var(--radius-lg); padding: 16px 20px; background: var(--gray100); margin-bottom: 12px; }
-    .mcard.on { background: var(--white); }
-    .mtop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .mtitle { font-size: 15px; font-weight: 600; color: var(--gray800); }
-    .msub { font-size: 12px; color: var(--gray600); margin-top: 3px; }
-    .chk { width: 18px; height: 18px; cursor: pointer; accent-color: var(--red); }
-    .mf { display: flex; flex-direction: column; gap: 10px; }
-    .pr { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 480px) { .pr { grid-template-columns: 1fr; } }
-    .pcell { display: flex; flex-direction: column; gap: 5px; }
-
-    /* 공시지원금 링크 */
-    .field-link { font-size: 11px; color: var(--red); text-decoration: none; margin-top: -2px; display: inline-block; }
-    .field-link:hover { text-decoration: underline; }
-
-    .ibox { background: var(--gray100); border: 1px solid var(--gray200); border-radius: var(--radius-md); padding: 12px 14px; }
-    .ibox.h { display: none; }
-    .ilabel { font-size: 11px; color: var(--gray400); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-    .iprev { margin-top: 10px; background: var(--white); border: 1px solid var(--gray200); border-radius: var(--radius-md); padding: 10px 12px; display: none; }
-    .iprev.show { display: block; }
-    .prow { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
-    .prow .pl { color: var(--gray600); }
-    .prow .pv { font-weight: 600; color: var(--gray800); }
-    .prow .pv.red { color: var(--red); }
-    .pdiv { border: none; border-top: 1px solid var(--gray200); margin: 6px 0; }
-    .prow.ptot .pl { font-weight: 600; color: var(--gray800); }
-
-    .cta {
-      width: 100%; padding: 15px;
-      font-size: 16px; font-weight: 700;
-      background: var(--red); color: white;
-      border: none; border-radius: var(--radius-lg);
-      cursor: pointer; margin-bottom: 24px;
-      transition: opacity 0.15s;
-      letter-spacing: -0.3px;
-    }
-    .cta:hover { opacity: 0.88; }
-
-    .rarea { display: none; }
-    .rarea.show { display: block; }
-
-    .rkcard { border: 1px solid var(--gray200); border-radius: var(--radius-lg); padding: 18px 20px; background: var(--white); margin-bottom: 12px; }
-    .rkcard.best { border: 2px solid var(--red); }
-    .rkhead { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
-    .rkbadge { font-size: 26px; min-width: 38px; text-align: center; }
-    .rkinfo { flex: 1; }
-    .rkname { font-size: 16px; font-weight: 700; color: var(--gray800); }
-    .rkdet { font-size: 12px; color: var(--gray600); margin-top: 3px; }
-    .rkamt { text-align: right; }
-    .rktotal { font-size: 20px; font-weight: 700; color: var(--gray800); }
-    .rkavg { font-size: 12px; color: var(--gray600); margin-top: 3px; }
-    .bestbdg { font-size: 11px; background: var(--red-light); color: var(--red-dark); padding: 3px 10px; border-radius: 20px; font-weight: 700; display: inline-block; margin-bottom: 5px; }
-    .mbd { border-top: 1px solid var(--gray200); padding-top: 12px; }
-    .mtit2 { font-size: 11px; color: var(--gray400); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-    .phrow { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 12px; background: var(--gray50); border-radius: var(--radius-md); margin-bottom: 6px; }
-    .phperiod { font-size: 13px; color: var(--gray600); }
-    .phright { text-align: right; }
-    .phamt { font-size: 15px; font-weight: 700; color: var(--gray800); }
-    .phdet { font-size: 11px; color: var(--gray400); margin-top: 2px; }
-
-    .savemsg { text-align: center; font-size: 14px; color: var(--gray600); margin-bottom: 20px; padding: 14px; background: var(--white); border: 1px solid var(--gray200); border-radius: var(--radius-md); }
-    .savemsg strong { color: var(--red); }
-
-    .brow { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .blbl { font-size: 13px; color: var(--gray800); min-width: 80px; font-weight: 500; }
-    .btrack { flex: 1; height: 30px; background: var(--gray100); border-radius: var(--radius-md); overflow: hidden; }
-    .bfill { height: 100%; border-radius: var(--radius-md); display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: white; transition: width 0.6s ease; white-space: nowrap; }
-    .bval { font-size: 12px; color: var(--gray600); min-width: 84px; text-align: right; }
-
-    .bdtog { font-size: 13px; color: var(--gray600); cursor: pointer; text-align: center; margin-bottom: 12px; text-decoration: underline; }
-    .bdarea { display: none; }
-    .bdarea.show { display: block; }
-    .bdtbl { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 14px; }
-    .bdtbl th { font-size: 11px; color: var(--gray600); font-weight: 600; padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--gray200); }
-    .bdtbl td { padding: 7px 10px; color: var(--gray800); border-bottom: 1px solid var(--gray200); }
-    .bdtbl td:last-child { text-align: right; }
-    .bdtbl tr.tot td { font-weight: 700; border-bottom: none; padding-top: 12px; }
-    .bdtbl tr.itrow td { color: var(--red); }
-
-    .footer { text-align: center; font-size: 12px; color: var(--gray400); padding: 30px 0 10px; border-top: 1px solid var(--gray200); margin-top: 40px; }
-    .footer a { color: var(--gray400); text-decoration: underline; }
-
-    .info-note { font-size: 12px; color: var(--gray600); background: var(--gray100); border-left: 3px solid var(--gray400); padding: 8px 12px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin-bottom: 14px; line-height: 1.6; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--gray50);color:var(--gray800);line-height:1.5;min-height:100vh;}
+    .page-wrap{max-width:720px;margin:0 auto;padding:0 16px 60px;}
+    .site-header{text-align:center;padding:40px 0 8px;}
+    .site-header h1{font-size:32px;font-weight:700;}
+    .site-header h1 span{color:var(--red);}
+    .site-header p{font-size:15px;color:var(--gray600);margin-top:8px;}
+    .sec-label{font-size:17px;font-weight:600;color:var(--gray800);margin-bottom:14px;}
+    .card{background:var(--white);border:1px solid var(--gray200);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;}
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:480px){.g2{grid-template-columns:1fr;}}
+    .field{display:flex;flex-direction:column;gap:5px;}
+    .field label,.pcell label{font-size:12px;color:var(--gray600);font-weight:500;}
+    .fdesc{font-size:11px;color:var(--gray400);line-height:1.5;}
+    .num-wrap{position:relative;}
+    .num-wrap .nd{padding:9px 40px 9px 12px;font-size:15px;border:1px solid var(--gray200);border-radius:var(--radius-md);background:var(--gray50);color:var(--gray800);width:100%;cursor:text;min-height:42px;line-height:1.4;}
+    .num-wrap .nd:focus{outline:2px solid var(--red);outline-offset:-1px;}
+    .num-wrap .nu{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--gray400);pointer-events:none;}
+    .field select,.pcell select{padding:9px 12px;font-size:15px;border:1px solid var(--gray200);border-radius:var(--radius-md);background:var(--gray50);color:var(--gray800);width:100%;transition:border-color .15s;}
+    .field input[type="number"],.pcell input[type="number"]{padding:9px 12px;font-size:15px;border:1px solid var(--gray200);border-radius:var(--radius-md);background:var(--gray50);color:var(--gray800);width:100%;}
+    .trow{display:flex;gap:8px;}
+    .tbtn{flex:1;padding:8px;font-size:13px;border:1px solid var(--gray200);border-radius:var(--radius-md);background:var(--gray100);color:var(--gray600);cursor:pointer;text-align:center;transition:all .15s;}
+    .tbtn.on{background:var(--white);border-color:var(--gray800);color:var(--gray800);font-weight:600;}
+    .mcard{border:1px solid var(--gray200);border-radius:var(--radius-lg);padding:16px 20px;background:var(--gray100);margin-bottom:12px;}
+    .mcard.on{background:var(--white);}
+    .mtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .mtitle{font-size:15px;font-weight:600;color:var(--gray800);}
+    .msub{font-size:12px;color:var(--gray600);margin-top:3px;}
+    .chk{width:18px;height:18px;cursor:pointer;accent-color:var(--red);}
+    .mf{display:flex;flex-direction:column;gap:10px;}
+    .pr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    @media(max-width:480px){.pr{grid-template-columns:1fr;}}
+    .pcell{display:flex;flex-direction:column;gap:5px;}
+    .field-link{font-size:11px;color:var(--red);text-decoration:none;margin-top:-2px;display:inline-block;}
+    .field-link:hover{text-decoration:underline;}
+    .ibox{background:var(--gray100);border:1px solid var(--gray200);border-radius:var(--radius-md);padding:12px 14px;}
+    .ibox.h{display:none;}
+    .ilabel{font-size:11px;color:var(--gray400);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+    .iprev{margin-top:10px;background:var(--white);border:1px solid var(--gray200);border-radius:var(--radius-md);padding:10px 12px;display:none;}
+    .iprev.show{display:block;}
+    .prow{display:flex;justify-content:space-between;padding:3px 0;font-size:13px;}
+    .prow .pl{color:var(--gray600);}
+    .prow .pv{font-weight:600;color:var(--gray800);}
+    .prow .pv.red{color:var(--red);}
+    .pdiv{border:none;border-top:1px solid var(--gray200);margin:6px 0;}
+    .prow.ptot .pl{font-weight:600;color:var(--gray800);}
+    /* 요금제 서브섹션 */
+    .plan-box{background:var(--gray50);border:1px solid var(--gray200);border-radius:var(--radius-md);padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+    .plan-box-title{font-size:11px;color:var(--gray600);font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+    .cta{width:100%;padding:15px;font-size:16px;font-weight:700;background:var(--red);color:white;border:none;border-radius:var(--radius-lg);cursor:pointer;margin-bottom:24px;transition:opacity .15s;letter-spacing:-.3px;}
+    .cta:hover{opacity:.88;}
+    .rarea{display:none;}
+    .rarea.show{display:block;}
+    .rkcard{border:1px solid var(--gray200);border-radius:var(--radius-lg);padding:18px 20px;background:var(--white);margin-bottom:12px;}
+    .rkcard.best{border:2px solid var(--red);}
+    .rkhead{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+    .rkbadge{font-size:26px;min-width:38px;text-align:center;}
+    .rkinfo{flex:1;}
+    .rkname{font-size:16px;font-weight:700;color:var(--gray800);}
+    .rkdet{font-size:12px;color:var(--gray600);margin-top:3px;}
+    .rkamt{text-align:right;}
+    .rktotal{font-size:20px;font-weight:700;color:var(--gray800);}
+    .rkavg{font-size:12px;color:var(--gray600);margin-top:3px;}
+    .bestbdg{font-size:11px;background:var(--red-light);color:var(--red-dark);padding:3px 10px;border-radius:20px;font-weight:700;display:inline-block;margin-bottom:5px;}
+    .mbd{border-top:1px solid var(--gray200);padding-top:12px;}
+    .mtit2{font-size:11px;color:var(--gray400);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+    .phrow{display:flex;align-items:baseline;justify-content:space-between;padding:8px 12px;background:var(--gray50);border-radius:var(--radius-md);margin-bottom:6px;}
+    .phperiod{font-size:13px;color:var(--gray600);}
+    .phright{text-align:right;}
+    .phamt{font-size:15px;font-weight:700;color:var(--gray800);}
+    .phdet{font-size:11px;color:var(--gray400);margin-top:2px;}
+    .savemsg{text-align:center;font-size:14px;color:var(--gray600);margin-bottom:20px;padding:14px;background:var(--white);border:1px solid var(--gray200);border-radius:var(--radius-md);}
+    .savemsg strong{color:var(--red);}
+    .brow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .blbl{font-size:13px;color:var(--gray800);min-width:80px;font-weight:500;}
+    .btrack{flex:1;height:30px;background:var(--gray100);border-radius:var(--radius-md);overflow:hidden;}
+    .bfill{height:100%;border-radius:var(--radius-md);display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;color:white;transition:width .6s ease;white-space:nowrap;}
+    .bval{font-size:12px;color:var(--gray600);min-width:84px;text-align:right;}
+    .bdtog{font-size:13px;color:var(--gray600);cursor:pointer;text-align:center;margin-bottom:12px;text-decoration:underline;}
+    .bdarea{display:none;}
+    .bdarea.show{display:block;}
+    .bdtbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;}
+    .bdtbl th{font-size:11px;color:var(--gray600);font-weight:600;padding:7px 10px;text-align:left;border-bottom:1px solid var(--gray200);}
+    .bdtbl td{padding:7px 10px;color:var(--gray800);border-bottom:1px solid var(--gray200);}
+    .bdtbl td:last-child{text-align:right;}
+    .bdtbl tr.tot td{font-weight:700;border-bottom:none;padding-top:12px;}
+    .bdtbl tr.itrow td{color:var(--red);}
+    .footer{text-align:center;font-size:12px;color:var(--gray400);padding:30px 0 10px;border-top:1px solid var(--gray200);margin-top:40px;}
+    .info-note{font-size:12px;color:var(--gray600);background:var(--gray100);border-left:3px solid var(--gray400);padding:8px 12px;border-radius:0 var(--radius-md) var(--radius-md) 0;margin-bottom:14px;line-height:1.6;}
   </style>
 </head>
 <body>
-  <div class="page-wrap">
+<div class="page-wrap">
+  <header class="site-header">
+    <h1>나는 <span>호갱</span>일까?</h1>
+    <p>핸드폰 개통 방법별 비용을 내 상황에 맞게 직접 계산해보세요</p>
+  </header>
 
-    <header class="site-header">
-      <h1>나는 <span>호갱</span>일까?</h1>
-      <p>핸드폰 개통 방법별 비용을 내 상황에 맞게 직접 계산해보세요</p>
-    </header>
-
-    <div class="info-note" style="margin-top:20px;">
-      💡 할부이자는 원리금균등상환 방식으로 계산됩니다. 실제 청구금액은 통신사/카드사 조건에 따라 다를 수 있습니다.
-    </div>
-
-    <!-- 내 현재 상황 -->
-    <div class="card">
-      <div class="sec-label">내 현재 상황</div>
-      <div class="g2" style="margin-bottom:14px;">
-        <div class="field">
-          <label>구매 후 사용할 요금제</label>
-          <span class="fdesc">의무 요금제 유지 기간 종료 후<br>실제 사용할 요금제 금액</span>
-          <div class="num-wrap">
-            <div class="num-display" contenteditable="true" id="after-plan-disp" data-target="after-plan" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">49,000</div>
-            <span class="num-unit">원</span>
-            <input type="hidden" id="after-plan" value="49000">
-          </div>
-        </div>
-        <div class="field">
-          <label>비교 기간</label>
-          <span class="fdesc">&nbsp;<br>&nbsp;</span>
-          <select id="period">
-            <option value="12">12개월 (1년)</option>
-            <option value="24" selected>24개월 (2년)</option>
-            <option value="36">36개월 (3년)</option>
-            <option value="48">48개월 (4년)</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>요금제 약정 할인</label>
-        <div class="trow" style="margin-top:2px;">
-          <div class="tbtn on" id="disc-yes" onclick="setDsc('25')">선택약정 25%</div>
-          <div class="tbtn" id="disc-no" onclick="setDsc('0')">약정 없음 (알뜰폰 등)</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 단말기 출고가 (공통) -->
-    <div class="card">
-      <div class="sec-label">단말기 출고가</div>
-      <div class="field">
-        <label>출고가 (통신사 공통)</label>
-        <span class="fdesc">SKT·KT·U+ 모두 동일한 제조사 공식 가격</span>
-        <div class="num-wrap">
-          <div class="num-display" contenteditable="true" id="msrp-disp" data-target="msrp" oninput="onNumInput(this);syncMsrp()" onkeydown="onNumKey(event,this)">1,287,000</div>
-          <span class="num-unit">원</span>
-          <input type="hidden" id="msrp" value="1287000">
-        </div>
-      </div>
-    </div>
-
-    <!-- 개통 방법 설정 -->
-    <div class="card">
-      <div class="sec-label">개통 방법 설정</div>
-
-      <!-- 자급제 -->
-      <div class="mcard on">
-        <div class="mtop">
-          <div><div class="mtitle">자급제 구매</div><div class="msub">단말기 직접 구매 + 기존 요금제 유지</div></div>
-        </div>
-        <div class="mf">
-          <div class="field">
-            <label>자급제 구매가 <span style="font-size:11px;color:var(--gray400);font-weight:400;">(출고가와 다를 수 있음)</span></label>
-            <div class="num-wrap">
-              <div class="num-display" contenteditable="true" id="sim-price-disp" data-target="sim-price" oninput="onNumInput(this);upv('sim')" onkeydown="onNumKey(event,this)">1,287,000</div>
-              <span class="num-unit">원</span>
-              <input type="hidden" id="sim-price" value="1287000">
-            </div>
-          </div>
-          <div class="field">
-            <label>결제 방식</label>
-            <div class="trow">
-              <div class="tbtn on" id="sim-pf" onclick="setPT('sim','full')">일시불</div>
-              <div class="tbtn" id="sim-pi" onclick="setPT('sim','inst')">할부</div>
-            </div>
-          </div>
-          <div class="ibox h" id="sim-ib">
-            <div class="ilabel">할부 설정</div>
-            <div class="g2">
-              <div class="field"><label>할부 개월 수</label><select id="sim-im" onchange="upv('sim')"><option value="12">12개월</option><option value="24" selected>24개월</option><option value="36">36개월</option><option value="48">48개월</option></select></div>
-              <div class="field"><label>할부 연이자율 (%)</label><input type="number" id="sim-ir" value="5.9" step="0.1" oninput="upv('sim')"></div>
-            </div>
-            <div class="iprev" id="sim-ip">
-              <div class="prow"><span class="pl">자급제 구매가</span><span class="pv" id="sim-v1"></span></div>
-              <div class="prow"><span class="pl" style="color:var(--red);">+ 할부이자</span><span class="pv red" id="sim-v2"></span></div>
-              <hr class="pdiv">
-              <div class="prow ptot"><span class="pl">단말기 총 실비용</span><span class="pv" id="sim-v3"></span></div>
-              <div class="prow"><span class="pl">월 할부금</span><span class="pv" id="sim-v4"></span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 공시지원금(이통사지원금) -->
-      <div class="mcard on" id="pub-card">
-        <div class="mtop">
-          <div><div class="mtitle">이통사지원금 (구 공시지원금)</div><div class="msub">이통사 지원금으로 할부원금 차감 · 요금 약정 할인 불가</div></div>
-          <input type="checkbox" class="chk" id="pub-en" checked onchange="togM('pub')">
-        </div>
-        <div class="mf" id="pub-mf">
-
-          <!-- 할부원금 자동계산 미리보기 -->
-          <div class="ibox" id="pub-calc-box" style="background:var(--gray50);">
-            <div class="ilabel">할부원금 계산</div>
-            <div class="prow"><span class="pl">출고가</span><span class="pv" id="pub-msrp-disp">1,287,000원</span></div>
-            <div class="prow"><span class="pl" style="color:var(--red);">- 이통사지원금</span><span class="pv red" id="pub-mno-disp">0원</span></div>
-            <div class="prow"><span class="pl" style="color:var(--red);">- 유통망지원금</span><span class="pv red" id="pub-dist-disp">0원</span></div>
-            <hr class="pdiv">
-            <div class="prow ptot"><span class="pl">할부원금</span><span class="pv" id="pub-principal-disp">1,287,000원</span></div>
-          </div>
-
-          <div class="pr">
-            <div class="pcell">
-              <label>이통사지원금</label>
-              <a class="field-link" href="https://www.smartchoice.or.kr/smc/mobile/dantongList.do" target="_blank" rel="noopener">📋 스마트초이스 조회 →</a>
-              <div class="num-wrap">
-                <div class="num-display" contenteditable="true" id="pub-mno-disp-input" data-target="pub-mno" oninput="onNumInput(this);upv('pub')" onkeydown="onNumKey(event,this)">0</div>
-                <span class="num-unit">원</span>
-                <input type="hidden" id="pub-mno" value="0">
-              </div>
-            </div>
-            <div class="pcell">
-              <label>유통망지원금 <span style="font-size:11px;color:var(--gray400);font-weight:400;">(없으면 0)</span></label>
-              <span style="font-size:11px;color:var(--gray400);line-height:1.8;">&nbsp;</span>
-              <div class="num-wrap">
-                <div class="num-display" contenteditable="true" id="pub-dist-disp-input" data-target="pub-dist" oninput="onNumInput(this);upv('pub')" onkeydown="onNumKey(event,this)">0</div>
-                <span class="num-unit">원</span>
-                <input type="hidden" id="pub-dist" value="0">
-              </div>
-            </div>
-          </div>
-          <div class="pr">
-            <div class="pcell">
-              <label>의무 고가 요금제</label>
-              <div class="num-wrap">
-                <div class="num-display" contenteditable="true" id="pub-hp-disp" data-target="pub-hp" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">99,000</div>
-                <span class="num-unit">원</span>
-                <input type="hidden" id="pub-hp" value="99000">
-              </div>
-            </div>
-            <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="pub-hm" value="6"></div>
-          </div>
-          <div class="pr">
-            <div class="pcell">
-              <label>부가서비스 금액</label>
-              <div class="num-wrap">
-                <div class="num-display" contenteditable="true" id="pub-ad-disp" data-target="pub-ad" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">3,500</div>
-                <span class="num-unit">원</span>
-                <input type="hidden" id="pub-ad" value="3500">
-              </div>
-            </div>
-            <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="pub-am" value="3"></div>
-          </div>
-          <div class="field"><label>결제 방식</label>
-            <div class="trow"><div class="tbtn on" id="pub-pf" onclick="setPT('pub','full')">일시불</div><div class="tbtn" id="pub-pi" onclick="setPT('pub','inst')">할부</div></div>
-          </div>
-          <div class="ibox h" id="pub-ib">
-            <div class="ilabel">할부 설정</div>
-            <div class="g2">
-              <div class="field"><label>할부 개월 수</label><select id="pub-im" onchange="upv('pub')"><option value="12">12개월</option><option value="24" selected>24개월</option><option value="36">36개월</option><option value="48">48개월</option></select></div>
-              <div class="field"><label>할부 연이자율 (%)</label><input type="number" id="pub-ir" value="5.9" step="0.1" oninput="upv('pub')"></div>
-            </div>
-            <div class="iprev" id="pub-ip">
-              <div class="prow"><span class="pl">할부원금</span><span class="pv" id="pub-v1"></span></div>
-              <div class="prow"><span class="pl" style="color:var(--red);">+ 할부이자</span><span class="pv red" id="pub-v2"></span></div>
-              <hr class="pdiv">
-              <div class="prow ptot"><span class="pl">단말기 총 실비용</span><span class="pv" id="pub-v3"></span></div>
-              <div class="prow"><span class="pl">월 할부금</span><span class="pv" id="pub-v4"></span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 선택약정 -->
-      <div class="mcard on" id="sel-card">
-        <div class="mtop">
-          <div><div class="mtitle">선택약정</div><div class="msub">출고가 그대로 할부 · 요금제 25% 할인</div></div>
-          <input type="checkbox" class="chk" id="sel-en" checked onchange="togM('sel')">
-        </div>
-        <div class="mf" id="sel-mf">
-
-          <!-- 할부원금 자동계산 미리보기 -->
-          <div class="ibox" id="sel-calc-box" style="background:var(--gray50);">
-            <div class="ilabel">할부원금 계산</div>
-            <div class="prow"><span class="pl">출고가</span><span class="pv" id="sel-msrp-disp">1,287,000원</span></div>
-            <div class="prow"><span class="pl" style="color:var(--red);">- 유통망지원금</span><span class="pv red" id="sel-dist-disp">0원</span></div>
-            <hr class="pdiv">
-            <div class="prow ptot"><span class="pl">할부원금</span><span class="pv" id="sel-principal-disp">1,287,000원</span></div>
-          </div>
-
-          <div class="field">
-            <label>유통망지원금 <span style="font-size:11px;color:var(--gray400);font-weight:400;">(없으면 0)</span></label>
-            <div class="num-wrap">
-              <div class="num-display" contenteditable="true" id="sel-dist-disp-input" data-target="sel-dist" oninput="onNumInput(this);upv('sel')" onkeydown="onNumKey(event,this)">0</div>
-              <span class="num-unit">원</span>
-              <input type="hidden" id="sel-dist" value="0">
-            </div>
-          </div>
-          <div class="pr">
-            <div class="pcell">
-              <label>의무 고가 요금제</label>
-              <div class="num-wrap">
-                <div class="num-display" contenteditable="true" id="sel-hp-disp" data-target="sel-hp" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">99,000</div>
-                <span class="num-unit">원</span>
-                <input type="hidden" id="sel-hp" value="99000">
-              </div>
-            </div>
-            <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="sel-hm" value="6"></div>
-          </div>
-          <div class="pr">
-            <div class="pcell">
-              <label>부가서비스 금액</label>
-              <div class="num-wrap">
-                <div class="num-display" contenteditable="true" id="sel-ad-disp" data-target="sel-ad" oninput="onNumInput(this)" onkeydown="onNumKey(event,this)">3,500</div>
-                <span class="num-unit">원</span>
-                <input type="hidden" id="sel-ad" value="3500">
-              </div>
-            </div>
-            <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="sel-am" value="3"></div>
-          </div>
-          <div class="field"><label>결제 방식</label>
-            <div class="trow"><div class="tbtn on" id="sel-pf" onclick="setPT('sel','full')">일시불</div><div class="tbtn" id="sel-pi" onclick="setPT('sel','inst')">할부</div></div>
-          </div>
-          <div class="ibox h" id="sel-ib">
-            <div class="ilabel">할부 설정</div>
-            <div class="g2">
-              <div class="field"><label>할부 개월 수</label><select id="sel-im" onchange="upv('sel')"><option value="12">12개월</option><option value="24" selected>24개월</option><option value="36">36개월</option><option value="48">48개월</option></select></div>
-              <div class="field"><label>할부 연이자율 (%)</label><input type="number" id="sel-ir" value="5.9" step="0.1" oninput="upv('sel')"></div>
-            </div>
-            <div class="iprev" id="sel-ip">
-              <div class="prow"><span class="pl">할부원금</span><span class="pv" id="sel-v1"></span></div>
-              <div class="prow"><span class="pl" style="color:var(--red);">+ 할부이자</span><span class="pv red" id="sel-v2"></span></div>
-              <hr class="pdiv">
-              <div class="prow ptot"><span class="pl">단말기 총 실비용</span><span class="pv" id="sel-v3"></span></div>
-              <div class="prow"><span class="pl">월 할부금</span><span class="pv" id="sel-v4"></span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class="cta" onclick="doCalc()">📊 비교 계산하기</button>
-
-    <!-- 결과 영역 -->
-    <div class="rarea" id="rarea">
-      <div class="sec-label">비교 결과</div>
-      <div id="rklist"></div>
-      <div class="savemsg" id="savemsg"></div>
-      <div id="bars" style="margin-bottom:20px;"></div>
-      <div class="bdtog" onclick="togBd()">▼ 상세 내역 보기</div>
-      <div class="bdarea" id="bdarea"></div>
-    </div>
-
-    <footer class="footer">
-      <p>본 계산기는 참고용으로, 실제 요금은 통신사 조건에 따라 다를 수 있습니다.</p>
-    </footer>
+  <div class="info-note" style="margin-top:20px;">
+    💡 할부이자는 원리금균등상환 방식으로 계산됩니다. 실제 청구금액은 통신사/카드사 조건에 따라 다를 수 있습니다.
   </div>
 
-  <script>
-    var dscRate='25', bdVis=false;
-    var PT={sim:'full',pub:'full',sel:'full'};
-    var IM={sim:'sim-im',pub:'pub-im',sel:'sel-im'};
-    var IR={sim:'sim-ir',pub:'pub-ir',sel:'sel-ir'};
+  <!-- 비교 기간 -->
+  <div class="card">
+    <div class="sec-label">비교 설정</div>
+    <div class="field" style="max-width:240px;">
+      <label>비교 기간</label>
+      <select id="period">
+        <option value="12">12개월 (1년)</option>
+        <option value="24" selected>24개월 (2년)</option>
+        <option value="36">36개월 (3년)</option>
+        <option value="48">48개월 (4년)</option>
+      </select>
+    </div>
+  </div>
 
-    function g(id){return document.getElementById(id);}
-    function fmt(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
-    function cl(id,cls,add){g(id).classList[add?'add':'remove'](cls);}
+  <!-- 단말기 출고가 (통신사 공통) -->
+  <div class="card">
+    <div class="sec-label">단말기 출고가</div>
+    <div class="field">
+      <label>출고가 (SKT·KT·U+ 공통)</label>
+      <span class="fdesc">제조사가 정한 공식 가격 — 통신사별 동일</span>
+      <div class="num-wrap">
+        <div class="nd" contenteditable="true" id="msrp-disp" data-target="msrp"
+             oninput="onNI(this);syncMsrp()" onkeydown="onNK(event,this)">1,287,000</div>
+        <span class="nu">원</span>
+        <input type="hidden" id="msrp" value="1287000">
+      </div>
+    </div>
+  </div>
 
-    /* ── 숫자 포맷 입력 처리 ── */
-    function onNumInput(el){
-      var raw=el.innerText.replace(/[^0-9]/g,'');
-      var num=parseInt(raw)||0;
-      var sel=window.getSelection();
-      el.innerText=num.toLocaleString('ko-KR');
-      if(el.childNodes.length>0){
-        var range=document.createRange();
-        range.selectNodeContents(el);range.collapse(false);
-        sel.removeAllRanges();sel.addRange(range);
-      }
-      var tid=el.getAttribute('data-target');
-      if(tid) g(tid).value=num;
+  <!-- 개통 방법 설정 -->
+  <div class="card">
+    <div class="sec-label">개통 방법 설정</div>
+
+    <!-- ① 자급제 -->
+    <div class="mcard on">
+      <div class="mtop">
+        <div><div class="mtitle">자급제 구매</div><div class="msub">단말기 직접 구매 · 요금제 자유 선택</div></div>
+      </div>
+      <div class="mf">
+        <div class="field">
+          <label>자급제 구매가 <span style="font-size:11px;color:var(--gray400);font-weight:400;">(출고가와 다를 수 있음)</span></label>
+          <div class="num-wrap">
+            <div class="nd" contenteditable="true" id="sim-price-disp" data-target="sim-price"
+                 oninput="onNI(this);upv('sim')" onkeydown="onNK(event,this)">1,287,000</div>
+            <span class="nu">원</span>
+            <input type="hidden" id="sim-price" value="1287000">
+          </div>
+        </div>
+        <div class="field">
+          <label>결제 방식</label>
+          <div class="trow">
+            <div class="tbtn on" id="sim-pf" onclick="setPT('sim','full')">일시불</div>
+            <div class="tbtn" id="sim-pi" onclick="setPT('sim','inst')">할부</div>
+          </div>
+        </div>
+        <div class="ibox h" id="sim-ib">
+          <div class="ilabel">할부 설정</div>
+          <div class="g2">
+            <div class="field"><label>할부 개월 수</label>
+              <select id="sim-im" onchange="upv('sim')">
+                <option value="12">12개월</option><option value="24" selected>24개월</option>
+                <option value="36">36개월</option><option value="48">48개월</option>
+              </select>
+            </div>
+            <div class="field"><label>할부 연이자율 (%)</label>
+              <input type="number" id="sim-ir" value="5.9" step="0.1" oninput="upv('sim')">
+            </div>
+          </div>
+          <div class="iprev" id="sim-ip">
+            <div class="prow"><span class="pl">구매가</span><span class="pv" id="sim-v1"></span></div>
+            <div class="prow"><span class="pl" style="color:var(--red);">+ 할부이자</span><span class="pv red" id="sim-v2"></span></div>
+            <hr class="pdiv">
+            <div class="prow ptot"><span class="pl">단말기 총 실비용</span><span class="pv" id="sim-v3"></span></div>
+            <div class="prow"><span class="pl">월 할부금</span><span class="pv" id="sim-v4"></span></div>
+          </div>
+        </div>
+
+        <!-- 자급제 요금제 설정 -->
+        <div class="plan-box">
+          <div class="plan-box-title">📋 요금제 설정</div>
+          <div class="g2">
+            <div class="field">
+              <label>월 요금제 금액</label>
+              <span class="fdesc">알뜰폰·통신사 관계없이<br>실제 납부할 금액</span>
+              <div class="num-wrap">
+                <div class="nd" contenteditable="true" id="sim-plan-disp" data-target="sim-plan"
+                     oninput="onNI(this)" onkeydown="onNK(event,this)">49,000</div>
+                <span class="nu">원</span>
+                <input type="hidden" id="sim-plan" value="49000">
+              </div>
+            </div>
+            <div class="field">
+              <label>약정 할인</label>
+              <span class="fdesc">&nbsp;<br>&nbsp;</span>
+              <div class="trow">
+                <div class="tbtn" id="sim-dy" onclick="setSimDsc('25')">선택약정 25%</div>
+                <div class="tbtn on" id="sim-dn" onclick="setSimDsc('0')">약정 없음</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② 이통사지원금 -->
+    <div class="mcard on" id="pub-card">
+      <div class="mtop">
+        <div><div class="mtitle">이통사지원금 (구 공시지원금)</div><div class="msub">이통사 지원금으로 할부원금 차감 · 요금 약정 할인 불가</div></div>
+        <input type="checkbox" class="chk" id="pub-en" checked onchange="togM('pub')">
+      </div>
+      <div class="mf" id="pub-mf">
+        <!-- 할부원금 계산 미리보기 -->
+        <div class="ibox" style="background:var(--gray50);">
+          <div class="ilabel">할부원금 계산</div>
+          <div class="prow"><span class="pl">출고가</span><span class="pv" id="pub-msrp-disp">1,287,000원</span></div>
+          <div class="prow"><span class="pl" style="color:var(--red);">- 이통사지원금</span><span class="pv red" id="pub-mno-preview">0원</span></div>
+          <div class="prow"><span class="pl" style="color:var(--red);">- 유통망지원금</span><span class="pv red" id="pub-dist-preview">0원</span></div>
+          <hr class="pdiv">
+          <div class="prow ptot"><span class="pl">할부원금</span><span class="pv" id="pub-principal-disp">1,287,000원</span></div>
+        </div>
+        <div class="pr">
+          <div class="pcell">
+            <label>이통사지원금</label>
+            <a class="field-link" href="https://www.smartchoice.or.kr/smc/mobile/dantongList.do" target="_blank" rel="noopener">📋 스마트초이스 조회 →</a>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="pub-mno-disp" data-target="pub-mno"
+                   oninput="onNI(this);upv('pub')" onkeydown="onNK(event,this)">0</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="pub-mno" value="0">
+            </div>
+          </div>
+          <div class="pcell">
+            <label>유통망지원금 <span style="font-size:11px;color:var(--gray400);font-weight:400;">(없으면 0)</span></label>
+            <span style="font-size:11px;color:var(--gray400);line-height:1.8;">&nbsp;</span>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="pub-dist-disp" data-target="pub-dist"
+                   oninput="onNI(this);upv('pub')" onkeydown="onNK(event,this)">0</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="pub-dist" value="0">
+            </div>
+          </div>
+        </div>
+        <div class="pr">
+          <div class="pcell">
+            <label>의무 고가 요금제</label>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="pub-hp-disp" data-target="pub-hp"
+                   oninput="onNI(this)" onkeydown="onNK(event,this)">99,000</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="pub-hp" value="99000">
+            </div>
+          </div>
+          <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="pub-hm" value="6"></div>
+        </div>
+        <div class="pr">
+          <div class="pcell">
+            <label>부가서비스 금액</label>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="pub-ad-disp" data-target="pub-ad"
+                   oninput="onNI(this)" onkeydown="onNK(event,this)">3,500</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="pub-ad" value="3500">
+            </div>
+          </div>
+          <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="pub-am" value="3"></div>
+        </div>
+
+        <!-- 이통사지원금 요금제 설정 -->
+        <div class="plan-box">
+          <div class="plan-box-title">📋 요금제 설정 (의무기간 종료 후)</div>
+          <div class="field">
+            <label>월 요금제 금액</label>
+            <span class="fdesc">의무 고가 요금제 기간 이후 실제 사용할 요금제<br>약정 할인 불가 (이통사지원금 선택 시)</span>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="pub-plan-disp" data-target="pub-plan"
+                   oninput="onNI(this)" onkeydown="onNK(event,this)">49,000</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="pub-plan" value="49000">
+            </div>
+          </div>
+        </div>
+
+        <div class="field"><label>결제 방식</label>
+          <div class="trow">
+            <div class="tbtn on" id="pub-pf" onclick="setPT('pub','full')">일시불</div>
+            <div class="tbtn" id="pub-pi" onclick="setPT('pub','inst')">할부</div>
+          </div>
+        </div>
+        <div class="ibox h" id="pub-ib">
+          <div class="ilabel">할부 설정</div>
+          <div class="g2">
+            <div class="field"><label>할부 개월 수</label>
+              <select id="pub-im" onchange="upv('pub')">
+                <option value="12">12개월</option><option value="24" selected>24개월</option>
+                <option value="36">36개월</option><option value="48">48개월</option>
+              </select>
+            </div>
+            <div class="field"><label>할부 연이자율 (%)</label>
+              <input type="number" id="pub-ir" value="5.9" step="0.1" oninput="upv('pub')">
+            </div>
+          </div>
+          <div class="iprev" id="pub-ip">
+            <div class="prow"><span class="pl">할부원금</span><span class="pv" id="pub-v1"></span></div>
+            <div class="prow"><span class="pl" style="color:var(--red);">+ 할부이자</span><span class="pv red" id="pub-v2"></span></div>
+            <hr class="pdiv">
+            <div class="prow ptot"><span class="pl">단말기 총 실비용</span><span class="pv" id="pub-v3"></span></div>
+            <div class="prow"><span class="pl">월 할부금</span><span class="pv" id="pub-v4"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 선택약정 -->
+    <div class="mcard on" id="sel-card">
+      <div class="mtop">
+        <div><div class="mtitle">선택약정</div><div class="msub">출고가 그대로 할부 · 요금제 25% 할인</div></div>
+        <input type="checkbox" class="chk" id="sel-en" checked onchange="togM('sel')">
+      </div>
+      <div class="mf" id="sel-mf">
+        <!-- 할부원금 계산 미리보기 -->
+        <div class="ibox" style="background:var(--gray50);">
+          <div class="ilabel">할부원금 계산</div>
+          <div class="prow"><span class="pl">출고가</span><span class="pv" id="sel-msrp-disp">1,287,000원</span></div>
+          <div class="prow"><span class="pl" style="color:var(--red);">- 유통망지원금</span><span class="pv red" id="sel-dist-preview">0원</span></div>
+          <hr class="pdiv">
+          <div class="prow ptot"><span class="pl">할부원금</span><span class="pv" id="sel-principal-disp">1,287,000원</span></div>
+        </div>
+        <div class="field">
+          <label>유통망지원금 <span style="font-size:11px;color:var(--gray400);font-weight:400;">(없으면 0)</span></label>
+          <div class="num-wrap">
+            <div class="nd" contenteditable="true" id="sel-dist-disp" data-target="sel-dist"
+                 oninput="onNI(this);upv('sel')" onkeydown="onNK(event,this)">0</div>
+            <span class="nu">원</span>
+            <input type="hidden" id="sel-dist" value="0">
+          </div>
+        </div>
+        <div class="pr">
+          <div class="pcell">
+            <label>의무 고가 요금제</label>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="sel-hp-disp" data-target="sel-hp"
+                   oninput="onNI(this)" onkeydown="onNK(event,this)">99,000</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="sel-hp" value="99000">
+            </div>
+          </div>
+          <div class="pcell"><label>의무 유지 기간 (개월)</label><input type="number" id="sel-hm" value="6"></div>
+        </div>
+        <div class="pr">
+          <div class="pcell">
+            <label>부가서비스 금액</label>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="sel-ad-disp" data-target="sel-ad"
+                   oninput="onNI(this)" onkeydown="onNK(event,this)">3,500</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="sel-ad" value="3500">
+            </div>
+          </div>
+          <div class="pcell"><label>부가서비스 의무 기간 (개월)</label><input type="number" id="sel-am" value="3"></div>
+        </div>
+
+        <!-- 선택약정 요금제 설정 -->
+        <div class="plan-box">
+          <div class="plan-box-title">📋 요금제 설정 (의무기간 종료 후)</div>
+          <div class="field">
+            <label>월 요금제 금액 <span style="font-size:11px;color:var(--gray400);font-weight:400;">선택약정 25% 할인 자동 적용</span></label>
+            <span class="fdesc">입력한 금액의 25%가 자동으로 할인 계산됩니다</span>
+            <div class="num-wrap">
+              <div class="nd" contenteditable="true" id="sel-plan-disp" data-target="sel-plan"
+                   oninput="onNI(this)" onkeydown="onNK(event,this)">49,000</div>
+              <span class="nu">원</span>
+              <input type="hidden" id="sel-plan" value="49000">
+            </div>
+          </div>
+        </div>
+
+        <div class="field"><label>결제 방식</label>
+          <div class="trow">
+            <div class="tbtn on" id="sel-pf" onclick="setPT('sel','full')">일시불</div>
+            <div class="tbtn" id="sel-pi" onclick="setPT('sel','inst')">할부</div>
+          </div>
+        </div>
+        <div class="ibox h" id="sel-ib">
+          <div class="ilabel">할부 설정</div>
+          <div class="g2">
+            <div class="field"><label>할부 개월 수</label>
+              <select id="sel-im" onchange="upv('sel')">
+                <option value="12">12개월</option><option value="24" selected>24개월</option>
+                <option value="36">36개월</option><option value="48">48개월</option>
+              </select>
+            </div>
+            <div class="field"><label>할부 연이자율 (%)</label>
+              <input type="number" id="sel-ir" value="5.9" step="0.1" oninput="upv('sel')">
+            </div>
+          </div>
+          <div class="iprev" id="sel-ip">
+            <div class="prow"><span class="pl">할부원금</span><span class="pv" id="sel-v1"></span></div>
+            <div class="prow"><span class="pl" style="color:var(--red);">+ 할부이자</span><span class="pv red" id="sel-v2"></span></div>
+            <hr class="pdiv">
+            <div class="prow ptot"><span class="pl">단말기 총 실비용</span><span class="pv" id="sel-v3"></span></div>
+            <div class="prow"><span class="pl">월 할부금</span><span class="pv" id="sel-v4"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="cta" onclick="doCalc()">📊 비교 계산하기</button>
+
+  <div class="rarea" id="rarea">
+    <div class="sec-label">비교 결과</div>
+    <div id="rklist"></div>
+    <div class="savemsg" id="savemsg"></div>
+    <div id="bars" style="margin-bottom:20px;"></div>
+    <div class="bdtog" onclick="togBd()">▼ 상세 내역 보기</div>
+    <div class="bdarea" id="bdarea"></div>
+  </div>
+
+  <footer class="footer">
+    <p>본 계산기는 참고용으로, 실제 요금은 통신사 조건에 따라 다를 수 있습니다.</p>
+  </footer>
+</div>
+
+<script>
+var PT={sim:'full',pub:'full',sel:'full'};
+var simDsc='0';
+var bdVis=false;
+var IM={sim:'sim-im',pub:'pub-im',sel:'sel-im'};
+var IR={sim:'sim-ir',pub:'pub-ir',sel:'sel-ir'};
+
+function g(id){return document.getElementById(id);}
+function fmt(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
+function cl(id,cls,add){g(id).classList[add?'add':'remove'](cls);}
+
+/* ── 숫자 포맷 입력 ── */
+function onNI(el){
+  var raw=el.innerText.replace(/[^0-9]/g,'');
+  var num=parseInt(raw)||0;
+  var sel=window.getSelection();
+  el.innerText=num.toLocaleString('ko-KR');
+  if(el.childNodes.length>0){
+    var r=document.createRange();r.selectNodeContents(el);r.collapse(false);
+    sel.removeAllRanges();sel.addRange(r);
+  }
+  var tid=el.getAttribute('data-target');
+  if(tid)g(tid).value=num;
+}
+function onNK(e,el){
+  var ok=[8,9,37,38,39,40,46];
+  if(e.key>='0'&&e.key<='9')return;
+  if(ok.indexOf(e.keyCode)>-1)return;
+  e.preventDefault();
+}
+function gv(id){return parseFloat(g(id).value)||0;}
+
+/* ── 자급제 약정 할인 ── */
+function setSimDsc(v){
+  simDsc=v;
+  cl('sim-dy','on',v==='25');
+  cl('sim-dn','on',v==='0');
+}
+
+/* ── 출고가 변경 시 미리보기 동기화 ── */
+function syncMsrp(){
+  var msrp=gv('msrp');
+  g('sim-price-disp').innerText=msrp.toLocaleString('ko-KR');
+  g('sim-price').value=msrp;
+  updPrincipal('pub');updPrincipal('sel');
+  upv('pub');upv('sel');upv('sim');
+}
+
+/* ── 할부원금 미리보기 ── */
+function updPrincipal(k){
+  var msrp=gv('msrp');
+  if(k==='pub'){
+    var mno=gv('pub-mno'),dist=gv('pub-dist');
+    var p=Math.max(0,msrp-mno-dist);
+    g('pub-msrp-disp').textContent=fmt(msrp);
+    g('pub-mno-preview').textContent=fmt(mno);
+    g('pub-dist-preview').textContent=fmt(dist);
+    g('pub-principal-disp').textContent=fmt(p);
+  } else {
+    var dist2=gv('sel-dist');
+    var p2=Math.max(0,msrp-dist2);
+    g('sel-msrp-disp').textContent=fmt(msrp);
+    g('sel-dist-preview').textContent=fmt(dist2);
+    g('sel-principal-disp').textContent=fmt(p2);
+  }
+}
+
+function getPrincipal(k){
+  var msrp=gv('msrp');
+  if(k==='pub')return Math.max(0,msrp-gv('pub-mno')-gv('pub-dist'));
+  if(k==='sel')return Math.max(0,msrp-gv('sel-dist'));
+  return gv('sim-price');
+}
+
+function setPT(k,t){
+  PT[k]=t;
+  cl(k+'-pf','on',t==='full');cl(k+'-pi','on',t==='inst');
+  var ib=g(k+'-ib');
+  if(t==='inst'){ib.classList.remove('h');upv(k);}else{ib.classList.add('h');}
+}
+function togM(k){
+  var en=g(k+'-en').checked;
+  g(k+'-mf').style.opacity=en?'1':'0.4';
+  g(k+'-mf').style.pointerEvents=en?'':'none';
+  cl(k+'-card','on',en);
+}
+function mp(p,m,r){var mr=r/100/12;return mr===0?p/m:p*mr*Math.pow(1+mr,m)/(Math.pow(1+mr,m)-1);}
+function gi(p,m,r){return Math.round(mp(p,m,r)*m-p);}
+
+function gpc(k){
+  var principal=getPrincipal(k);
+  if(PT[k]==='inst'){
+    var m=parseInt(g(IM[k]).value)||24,r=parseFloat(g(IR[k]).value)||5.9;
+    var i=gi(principal,m,r),mon=Math.round(mp(principal,m,r));
+    return{principal,interest:i,total:principal+i,isInst:true,months:m,rate:r,monthly:mon};
+  }
+  return{principal,interest:0,total:principal,isInst:false,months:0,rate:0,monthly:0};
+}
+
+function upv(k){
+  if(k==='pub'||k==='sel')updPrincipal(k);
+  if(PT[k]!=='inst')return;
+  var principal=getPrincipal(k);
+  var m=parseInt(g(IM[k]).value)||24,r=parseFloat(g(IR[k]).value)||5.9;
+  var i=gi(principal,m,r),mon=Math.round(mp(principal,m,r));
+  var ip=g(k+'-ip');ip.classList.add('show');
+  g(k+'-v1').textContent=fmt(principal);
+  g(k+'-v2').textContent=fmt(i);
+  g(k+'-v3').textContent=fmt(principal+i);
+  g(k+'-v4').textContent=fmt(mon)+' / 월';
+}
+
+function calcPhases(cost,secs){
+  var ps=[],cur=0;
+  for(var i=0;i<secs.length;i++){
+    var s=secs[i];if(s.months<=0)continue;
+    var im=cost.isInst?Math.min(s.months,Math.max(0,cost.months-cur)):0,nm=s.months-im;
+    if(im>0){
+      var t=cost.monthly+s.plan+(s.addon||0);
+      var pts=['할부금 '+fmt(cost.monthly),'요금 '+fmt(s.plan)];
+      if(s.addon)pts.push('부가 '+fmt(s.addon));
+      ps.push({period:(cur+1)+'~'+(cur+im)+'개월',amount:t,detail:pts.join(' + ')});
     }
-    function onNumKey(e,el){
-      var allowed=[8,9,37,38,39,40,46];
-      if(e.key>='0'&&e.key<='9')return;
-      if(allowed.indexOf(e.keyCode)>-1)return;
-      e.preventDefault();
+    if(nm>0){
+      var st=cur+im+1,t2=s.plan+(s.addon||0);
+      var pts2=['요금 '+fmt(s.plan)];
+      if(s.addon)pts2.push('부가 '+fmt(s.addon));
+      ps.push({period:st+'~'+(cur+s.months)+'개월',amount:t2,detail:pts2.join(' + ')});
     }
-    function getNumVal(hidId){return parseFloat(g(hidId).value)||0;}
+    cur+=s.months;
+  }
+  var mg=[];
+  for(var j=0;j<ps.length;j++){
+    var p=ps[j];
+    if(mg.length>0&&mg[mg.length-1].amount===p.amount&&mg[mg.length-1].detail===p.detail){
+      var pv=mg[mg.length-1];
+      pv.period=pv.period.split('~')[0]+'~'+p.period.split('~')[1];
+    }else mg.push({period:p.period,amount:p.amount,detail:p.detail});
+  }
+  return mg;
+}
 
-    /* ── 출고가 변경 시 미리보기 동기화 ── */
-    function syncMsrp(){
-      var msrp=getNumVal('msrp');
-      // 자급제 기본값도 동기화 (사용자가 직접 수정하지 않은 경우 편의상 같이 업데이트)
-      g('sim-price-disp').innerText=msrp.toLocaleString('ko-KR');
-      g('sim-price').value=msrp;
-      updatePrincipal('pub');
-      updatePrincipal('sel');
-      upv('pub');upv('sel');upv('sim');
+function doCalc(){
+  var period=parseInt(g('period').value);
+  var msrp=gv('msrp');
+  var res=[];
+
+  /* ① 자급제 */
+  var sc=gpc('sim');
+  var simPlan=gv('sim-plan');
+  var simPlanD=Math.round(simPlan*(simDsc==='25'?0.75:1));
+  var simDiscLabel=simDsc==='25'?' (25% 할인)':'';
+  res.push({
+    name:'자급제',
+    sub:'구매가 '+fmt(sc.principal)+(sc.isInst?' / '+sc.months+'개월 할부':' 일시불')+' | 요금제 '+fmt(simPlanD),
+    total:sc.total+simPlanD*period,
+    phases:calcPhases(sc,[{months:period,plan:simPlanD,addon:0}]),
+    isInst:sc.isInst,
+    psum:sc.isInst?fmt(sc.principal)+' + 이자 '+fmt(sc.interest)+' = '+fmt(sc.total):fmt(sc.principal)+' (일시불)',
+    bd:[{l:'자급제 구매가',a:sc.principal}]
+      .concat(sc.isInst?[{l:'할부이자 (연 '+sc.rate+'%, '+sc.months+'개월)',a:sc.interest,ri:true}]:[])
+      .concat([{l:'요금제'+simDiscLabel+' × '+period+'개월',a:simPlanD*period}])
+  });
+
+  /* ② 이통사지원금 */
+  if(g('pub-en').checked){
+    var pc=gpc('pub');
+    var pubMno=gv('pub-mno'),pubDist=gv('pub-dist');
+    var ph=gv('pub-hp'),pm=parseInt(g('pub-hm').value)||0;
+    var pa=gv('pub-ad'),pam=parseInt(g('pub-am').value)||0;
+    var pubPlan=gv('pub-plan'); // 약정할인 없음
+    var rm=Math.max(0,period-pm);
+    var secs=[];
+    if(pm>0)secs.push({months:pm,plan:ph,addon:pa});
+    if(rm>0)secs.push({months:rm,plan:pubPlan,addon:0});
+    res.push({
+      name:'이통사지원금',
+      sub:'할부원금 '+fmt(pc.principal)+(pc.isInst?' / '+pc.months+'개월 할부':' 일시불')+' | 요금제 '+fmt(pubPlan),
+      total:pc.total+ph*pm+pa*pam+pubPlan*rm,
+      phases:calcPhases(pc,secs),
+      isInst:pc.isInst,
+      psum:pc.isInst?fmt(pc.principal)+' + 이자 '+fmt(pc.interest)+' = '+fmt(pc.total):fmt(pc.principal)+' (일시불)',
+      bd:[{l:'출고가',a:msrp},{l:'- 이통사지원금',a:-pubMno,ri:true},{l:'- 유통망지원금',a:-pubDist,ri:true},{l:'할부원금',a:pc.principal}]
+        .concat(pc.isInst?[{l:'할부이자 (연 '+pc.rate+'%, '+pc.months+'개월)',a:pc.interest,ri:true}]:[])
+        .concat([{l:ph.toLocaleString()+'원 요금제 × '+pm+'개월 (의무)',a:ph*pm},{l:'부가서비스 × '+pam+'개월',a:pa*pam},{l:pubPlan.toLocaleString()+'원 요금제 × '+rm+'개월',a:pubPlan*rm}])
+    });
+  }
+
+  /* ③ 선택약정 */
+  if(g('sel-en').checked){
+    var sc2=gpc('sel');
+    var selDist=gv('sel-dist');
+    var sh=gv('sel-hp'),sm=parseInt(g('sel-hm').value)||0;
+    var sa=gv('sel-ad'),sam=parseInt(g('sel-am').value)||0;
+    var selPlan=gv('sel-plan');
+    var selPlanD=Math.round(selPlan*0.75);
+    var shd=Math.round(sh*0.75);
+    var rm2=Math.max(0,period-sm);
+    var secs2=[];
+    if(sm>0)secs2.push({months:sm,plan:shd,addon:sa});
+    if(rm2>0)secs2.push({months:rm2,plan:selPlanD,addon:0});
+    res.push({
+      name:'선택약정',
+      sub:'할부원금 '+fmt(sc2.principal)+(sc2.isInst?' / '+sc2.months+'개월 할부':' 일시불')+' | 요금제 '+fmt(selPlanD)+' (25% 할인)',
+      total:sc2.total+shd*sm+sa*sam+selPlanD*rm2,
+      phases:calcPhases(sc2,secs2),
+      isInst:sc2.isInst,
+      psum:sc2.isInst?fmt(sc2.principal)+' + 이자 '+fmt(sc2.interest)+' = '+fmt(sc2.total):fmt(sc2.principal)+' (일시불)',
+      bd:[{l:'출고가',a:msrp}]
+        .concat(selDist>0?[{l:'- 유통망지원금',a:-selDist,ri:true}]:[])
+        .concat([{l:'할부원금',a:sc2.principal}])
+        .concat(sc2.isInst?[{l:'할부이자 (연 '+sc2.rate+'%, '+sc2.months+'개월)',a:sc2.interest,ri:true}]:[])
+        .concat([{l:sh.toLocaleString()+'원 요금제 (25% 할인) × '+sm+'개월',a:shd*sm},{l:'부가서비스 × '+sam+'개월',a:sa*sam},{l:selPlan.toLocaleString()+'원 요금제 (25% 할인) × '+rm2+'개월',a:selPlanD*rm2}])
+    });
+  }
+
+  res.sort(function(a,b){return a.total-b.total;});
+  var medals=['🥇','🥈','🥉'],colors=['#E24B4A','#888888','#BBBBBB'];
+  var maxT=Math.max.apply(null,res.map(function(r){return r.total;}));
+
+  var rkHtml='';
+  for(var i=0;i<res.length;i++){
+    var r=res[i],phHtml='';
+    for(var j=0;j<r.phases.length;j++){
+      var p=r.phases[j];
+      phHtml+='<div class="phrow"><span class="phperiod">'+p.period+'</span>'
+        +'<div class="phright"><div class="phamt">'+fmt(p.amount)+' / 월</div>'
+        +'<div class="phdet">'+p.detail+'</div></div></div>';
     }
+    var psumStyle=r.isInst?'color:var(--red);font-weight:700;':'font-weight:700;';
+    rkHtml+='<div class="rkcard'+(i===0?' best':'')+'"><div class="rkhead">'
+      +'<div class="rkbadge">'+(medals[i]||'')+'</div>'
+      +'<div class="rkinfo">'+(i===0?'<div class="bestbdg">✨ 최저가</div>':'')
+      +'<div class="rkname">'+r.name+'</div><div class="rkdet">'+r.sub+'</div></div>'
+      +'<div class="rkamt"><div class="rktotal">'+fmt(r.total)+'</div>'
+      +'<div class="rkavg">월평균 '+fmt(r.total/period)+'</div></div></div>'
+      +'<div class="mbd"><div class="mtit2">월 청구금액</div>'
+      +'<div style="font-size:13px;color:#666;margin-bottom:8px;">단말기'+(r.isInst?' 총 실비용':'')+': '
+      +'<span style="'+psumStyle+'">'+r.psum+'</span></div>'+phHtml+'</div></div>';
+  }
+  g('rklist').innerHTML=rkHtml;
 
-    /* ── 할부원금 미리보기 업데이트 ── */
-    function updatePrincipal(k){
-      var msrp=getNumVal('msrp');
-      if(k==='pub'){
-        var mno=getNumVal('pub-mno'),dist=getNumVal('pub-dist');
-        var principal=Math.max(0,msrp-mno-dist);
-        g('pub-msrp-disp').textContent=fmt(msrp);
-        g('pub-mno-disp').textContent=fmt(mno);
-        g('pub-dist-disp').textContent=fmt(dist);
-        g('pub-principal-disp').textContent=fmt(principal);
-      } else {
-        var dist2=getNumVal('sel-dist');
-        var principal2=Math.max(0,msrp-dist2);
-        g('sel-msrp-disp').textContent=fmt(msrp);
-        g('sel-dist-disp').textContent=fmt(dist2);
-        g('sel-principal-disp').textContent=fmt(principal2);
-      }
+  var best=res[0],worst=res[res.length-1];
+  g('savemsg').innerHTML='<strong>'+best.name+'</strong>이 가장 유리해요!<br>'
+    +'<strong>'+worst.name+'</strong> 대비 <strong>'+fmt(worst.total-best.total)+'</strong> 절약 가능합니다.';
+
+  var barHtml='';
+  for(var i=0;i<res.length;i++){
+    var pct=Math.round((res[i].total/maxT)*100);
+    barHtml+='<div class="brow"><div class="blbl">'+res[i].name+'</div>'
+      +'<div class="btrack"><div class="bfill" style="width:'+pct+'%;background:'+colors[i]+';">'+pct+'%</div></div>'
+      +'<div class="bval">'+fmt(res[i].total)+'</div></div>';
+  }
+  g('bars').innerHTML=barHtml;
+
+  var bdHtml='';
+  for(var i=0;i<res.length;i++){
+    var r=res[i],rows='';
+    for(var j=0;j<r.bd.length;j++){
+      var b=r.bd[j];
+      var da=b.a<0?'- '+fmt(Math.abs(b.a)):fmt(b.a);
+      rows+='<tr'+(b.ri?' class="itrow"':'')+'><td>'+b.l+'</td><td>'+da+'</td></tr>';
     }
+    bdHtml+='<div style="margin-bottom:16px;">'
+      +'<div style="font-size:14px;font-weight:700;color:var(--gray800);margin-bottom:8px;">'+r.name+'</div>'
+      +'<table class="bdtbl"><tr><th>항목</th><th style="text-align:right;">금액</th></tr>'
+      +rows+'<tr class="tot"><td>합계 ('+period+'개월)</td><td>'+fmt(r.total)+'</td></tr></table></div>';
+  }
+  g('bdarea').innerHTML=bdHtml;
 
-    function setDsc(v){dscRate=v;cl('disc-yes','on',v==='25');cl('disc-no','on',v==='0');}
+  g('rarea').classList.add('show');
+  g('rarea').scrollIntoView({behavior:'smooth',block:'start'});
+}
 
-    function setPT(k,t){
-      PT[k]=t;
-      cl(k+'-pf','on',t==='full');cl(k+'-pi','on',t==='inst');
-      var ib=g(k+'-ib');
-      if(t==='inst'){ib.classList.remove('h');upv(k);}else{ib.classList.add('h');}
-    }
-    function togM(k){
-      var en=g(k+'-en').checked;
-      var mf=g(k+'-mf');
-      mf.style.opacity=en?'1':'0.4';mf.style.pointerEvents=en?'':'none';
-      cl(k+'-card','on',en);
-    }
-    function mp(p,m,r){var mr=r/100/12;return mr===0?p/m:p*mr*Math.pow(1+mr,m)/(Math.pow(1+mr,m)-1);}
-    function gi(p,m,r){return Math.round(mp(p,m,r)*m-p);}
+function togBd(){
+  bdVis=!bdVis;
+  g('bdarea').classList[bdVis?'add':'remove']('show');
+  g('bdarea').previousElementSibling.textContent=bdVis?'▲ 상세 내역 접기':'▼ 상세 내역 보기';
+}
 
-    /* ── 단말기 실비용 계산 (할부원금 기준) ── */
-    function getPrincipal(k){
-      var msrp=getNumVal('msrp');
-      if(k==='pub'){
-        var mno=getNumVal('pub-mno'),dist=getNumVal('pub-dist');
-        return Math.max(0,msrp-mno-dist);
-      } else if(k==='sel'){
-        var dist2=getNumVal('sel-dist');
-        return Math.max(0,msrp-dist2);
-      } else {
-        return getNumVal('sim-price');
-      }
-    }
-
-    function gpc(k){
-      var principal=getPrincipal(k);
-      if(PT[k]==='inst'){
-        var m=parseInt(g(IM[k]).value)||24,r=parseFloat(g(IR[k]).value)||5.9;
-        var i=gi(principal,m,r),mon=Math.round(mp(principal,m,r));
-        return{principal:principal,interest:i,total:principal+i,isInst:true,months:m,rate:r,monthly:mon};
-      }
-      return{principal:principal,interest:0,total:principal,isInst:false,months:0,rate:0,monthly:0};
-    }
-
-    function upv(k){
-      updatePrincipal(k==='pub'?'pub':k==='sel'?'sel':null);
-      if(PT[k]!=='inst')return;
-      var principal=getPrincipal(k);
-      var m=parseInt(g(IM[k]).value)||24,r=parseFloat(g(IR[k]).value)||5.9;
-      var i=gi(principal,m,r),mon=Math.round(mp(principal,m,r));
-      var ip=g(k+'-ip');ip.classList.add('show');
-      g(k+'-v1').textContent=fmt(principal);
-      g(k+'-v2').textContent=fmt(i);
-      g(k+'-v3').textContent=fmt(principal+i);
-      g(k+'-v4').textContent=fmt(mon)+' / 월';
-    }
-
-    function calcPhases(cost,secs){
-      var ps=[],cur=0;
-      for(var i=0;i<secs.length;i++){
-        var s=secs[i];if(s.months<=0)continue;
-        var im=cost.isInst?Math.min(s.months,Math.max(0,cost.months-cur)):0,nm=s.months-im;
-        if(im>0){
-          var t=cost.monthly+s.plan+(s.addon||0);
-          var pts=['할부금 '+fmt(cost.monthly),'요금 '+fmt(s.plan)];
-          if(s.addon)pts.push('부가 '+fmt(s.addon));
-          ps.push({period:(cur+1)+'~'+(cur+im)+'개월',amount:t,detail:pts.join(' + ')});
-        }
-        if(nm>0){
-          var st=cur+im+1,t2=s.plan+(s.addon||0);
-          var pts2=['요금 '+fmt(s.plan)];
-          if(s.addon)pts2.push('부가 '+fmt(s.addon));
-          ps.push({period:st+'~'+(cur+s.months)+'개월',amount:t2,detail:pts2.join(' + ')});
-        }
-        cur+=s.months;
-      }
-      var mg=[];
-      for(var j=0;j<ps.length;j++){
-        var p=ps[j];
-        if(mg.length>0&&mg[mg.length-1].amount===p.amount&&mg[mg.length-1].detail===p.detail){
-          var pv=mg[mg.length-1];
-          pv.period=pv.period.split('~')[0]+'~'+p.period.split('~')[1];
-        }else{mg.push({period:p.period,amount:p.amount,detail:p.detail});}
-      }
-      return mg;
-    }
-
-    function doCalc(){
-      var period=parseInt(g('period').value);
-      var afterPlan=getNumVal('after-plan');
-      var discMult=dscRate==='25'?0.75:1.0;
-      var afterD=Math.round(afterPlan*discMult);
-      var discLabel=dscRate==='25'?' (25% 할인)':'';
-      var msrp=getNumVal('msrp');
-      var res=[];
-
-      /* 자급제 */
-      var sc=gpc('sim');
-      res.push({name:'자급제',
-        sub:'구매가 '+fmt(sc.principal)+(sc.isInst?' / '+sc.months+'개월 할부':' 일시불'),
-        total:sc.total+afterD*period,
-        phases:calcPhases(sc,[{months:period,plan:afterD,addon:0}]),
-        isInst:sc.isInst,
-        psum:sc.isInst?fmt(sc.principal)+' + 이자 '+fmt(sc.interest)+' = '+fmt(sc.total):fmt(sc.principal)+' (일시불)',
-        bd:[{l:'자급제 구매가',a:sc.principal}]
-          .concat(sc.isInst?[{l:'할부이자 (연 '+sc.rate+'%, '+sc.months+'개월)',a:sc.interest,ri:true}]:[])
-          .concat([{l:'요금제'+discLabel+' × '+period+'개월',a:afterD*period}])
-      });
-
-      /* 이통사지원금 */
-      if(g('pub-en').checked){
-        var pc=gpc('pub');
-        var pubMno=getNumVal('pub-mno'),pubDist=getNumVal('pub-dist');
-        var ph=getNumVal('pub-hp'),pm=parseInt(g('pub-hm').value)||0;
-        var pa=getNumVal('pub-ad'),pam=parseInt(g('pub-am').value)||0;
-        var rm=Math.max(0,period-pm);
-        var secs=[];if(pm>0)secs.push({months:pm,plan:ph,addon:pa});if(rm>0)secs.push({months:rm,plan:afterPlan,addon:0});
-        res.push({name:'이통사지원금',
-          sub:'할부원금 '+fmt(pc.principal)+(pc.isInst?' / '+pc.months+'개월 할부':' 일시불'),
-          total:pc.total+ph*pm+pa*pam+afterPlan*rm,
-          phases:calcPhases(pc,secs),isInst:pc.isInst,
-          psum:pc.isInst?fmt(pc.principal)+' + 이자 '+fmt(pc.interest)+' = '+fmt(pc.total):fmt(pc.principal)+' (일시불)',
-          bd:[{l:'출고가',a:msrp},
-              {l:'- 이통사지원금',a:-pubMno,ri:true},
-              {l:'- 유통망지원금',a:-pubDist,ri:true},
-              {l:'할부원금',a:pc.principal}]
-            .concat(pc.isInst?[{l:'할부이자 (연 '+pc.rate+'%, '+pc.months+'개월)',a:pc.interest,ri:true}]:[])
-            .concat([{l:ph.toLocaleString()+'원 요금제 × '+pm+'개월 (의무)',a:ph*pm},
-                     {l:'부가서비스 × '+pam+'개월',a:pa*pam},
-                     {l:afterPlan.toLocaleString()+'원 요금제 (정가) × '+rm+'개월',a:afterPlan*rm}])
-        });
-      }
-
-      /* 선택약정 */
-      if(g('sel-en').checked){
-        var sc2=gpc('sel');
-        var selDist=getNumVal('sel-dist');
-        var sh=getNumVal('sel-hp'),sm=parseInt(g('sel-hm').value)||0;
-        var sa=getNumVal('sel-ad'),sam=parseInt(g('sel-am').value)||0;
-        var rm2=Math.max(0,period-sm);
-        var shd=Math.round(sh*0.75),sad=Math.round(afterPlan*0.75);
-        var secs2=[];if(sm>0)secs2.push({months:sm,plan:shd,addon:sa});if(rm2>0)secs2.push({months:rm2,plan:sad,addon:0});
-        res.push({name:'선택약정',
-          sub:'할부원금 '+fmt(sc2.principal)+(sc2.isInst?' / '+sc2.months+'개월 할부':' 일시불'),
-          total:sc2.total+shd*sm+sa*sam+sad*rm2,
-          phases:calcPhases(sc2,secs2),isInst:sc2.isInst,
-          psum:sc2.isInst?fmt(sc2.principal)+' + 이자 '+fmt(sc2.interest)+' = '+fmt(sc2.total):fmt(sc2.principal)+' (일시불)',
-          bd:[{l:'출고가',a:msrp}]
-            .concat(selDist>0?[{l:'- 유통망지원금',a:-selDist,ri:true}]:[])
-            .concat([{l:'할부원금',a:sc2.principal}])
-            .concat(sc2.isInst?[{l:'할부이자 (연 '+sc2.rate+'%, '+sc2.months+'개월)',a:sc2.interest,ri:true}]:[])
-            .concat([{l:sh.toLocaleString()+'원 요금제 (25% 할인) × '+sm+'개월',a:shd*sm},
-                     {l:'부가서비스 × '+sam+'개월',a:sa*sam},
-                     {l:afterPlan.toLocaleString()+'원 요금제 (25% 할인) × '+rm2+'개월',a:sad*rm2}])
-        });
-      }
-
-      res.sort(function(a,b){return a.total-b.total;});
-      var medals=['🥇','🥈','🥉'],colors=['#E24B4A','#888888','#BBBBBB'];
-      var maxT=Math.max.apply(null,res.map(function(r){return r.total;}));
-
-      var rkHtml='';
-      for(var i=0;i<res.length;i++){
-        var r=res[i],phHtml='';
-        for(var j=0;j<r.phases.length;j++){
-          var p=r.phases[j];
-          phHtml+='<div class="phrow"><span class="phperiod">'+p.period+'</span><div class="phright"><div class="phamt">'+fmt(p.amount)+' / 월</div><div class="phdet">'+p.detail+'</div></div></div>';
-        }
-        var psumStyle=r.isInst?'color:var(--red);font-weight:700;':'font-weight:700;';
-        rkHtml+='<div class="rkcard'+(i===0?' best':'')+'"><div class="rkhead"><div class="rkbadge">'+(medals[i]||'')+'</div><div class="rkinfo">'+(i===0?'<div class="bestbdg">✨ 최저가</div>':'')+'<div class="rkname">'+r.name+'</div><div class="rkdet">'+r.sub+'</div></div><div class="rkamt"><div class="rktotal">'+fmt(r.total)+'</div><div class="rkavg">월평균 '+fmt(r.total/period)+'</div></div></div>'
-          +'<div class="mbd"><div class="mtit2">월 청구금액</div><div style="font-size:13px;color:#666;margin-bottom:8px;">단말기'+(r.isInst?' 총 실비용':'')+': <span style="'+psumStyle+'">'+r.psum+'</span></div>'+phHtml+'</div></div>';
-      }
-      g('rklist').innerHTML=rkHtml;
-
-      var best=res[0],worst=res[res.length-1];
-      g('savemsg').innerHTML='<strong>'+best.name+'</strong>이 가장 유리해요!<br><strong>'+worst.name+'</strong> 대비 <strong>'+fmt(worst.total-best.total)+'</strong> 절약 가능합니다.';
-
-      var barHtml='';
-      for(var i=0;i<res.length;i++){
-        var pct=Math.round((res[i].total/maxT)*100);
-        barHtml+='<div class="brow"><div class="blbl">'+res[i].name+'</div><div class="btrack"><div class="bfill" style="width:'+pct+'%;background:'+colors[i]+';">'+pct+'%</div></div><div class="bval">'+fmt(res[i].total)+'</div></div>';
-      }
-      g('bars').innerHTML=barHtml;
-
-      var bdHtml='';
-      for(var i=0;i<res.length;i++){
-        var r=res[i],rows='';
-        for(var j=0;j<r.bd.length;j++){
-          var b=r.bd[j];
-          var dispAmt=b.a<0?'- '+fmt(Math.abs(b.a)):fmt(b.a);
-          rows+='<tr'+(b.ri?' class="itrow"':'')+'><td>'+b.l+'</td><td>'+dispAmt+'</td></tr>';
-        }
-        bdHtml+='<div style="margin-bottom:16px;"><div style="font-size:14px;font-weight:700;color:var(--gray800);margin-bottom:8px;">'+r.name+'</div>'
-          +'<table class="bdtbl"><tr><th>항목</th><th style="text-align:right;">금액</th></tr>'+rows
-          +'<tr class="tot"><td>합계 ('+period+'개월)</td><td>'+fmt(r.total)+'</td></tr></table></div>';
-      }
-      g('bdarea').innerHTML=bdHtml;
-
-      g('rarea').classList.add('show');
-      g('rarea').scrollIntoView({behavior:'smooth',block:'start'});
-    }
-
-    function togBd(){
-      bdVis=!bdVis;
-      g('bdarea').classList[bdVis?'add':'remove']('show');
-      g('bdarea').previousElementSibling.textContent=bdVis?'▲ 상세 내역 접기':'▼ 상세 내역 보기';
-    }
-
-    /* 초기 미리보기 세팅 */
-    updatePrincipal('pub');
-    updatePrincipal('sel');
-  </script>
+updPrincipal('pub');updPrincipal('sel');
+</script>
 </body>
 </html>
